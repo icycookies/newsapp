@@ -5,17 +5,18 @@ public class News {
     private String date;                //发布时间
     private String publisher;           //发布者
     private String url;                 //正文链接
-    private String content;             //正文内容
+    private String content;             //正文内容（也许并不需要）
     private String[] image;             //图片链接
 
     private boolean viewed;             //是否已读
+    private String file;                //本地存储路径
 
     //聚类
     //private News[] related;             //相关新闻
     //private double[] score;             //相关性
 
     News(final String title, final String date, final String publisher, final String url,
-         final String content, final String[] image, final boolean viewed){
+         final String content, final String[] image, final boolean viewed, final String file){
         this.title = title;
         this.date = date;
         this.publisher = publisher;
@@ -23,6 +24,7 @@ public class News {
         this.content = content;
         this.image = image;
         this.viewed = viewed;
+        this.file = file;
     }
 
     //getter
@@ -47,6 +49,9 @@ public class News {
     public boolean isViewed() {
         return viewed;
     }
+    public String getFile(){
+        return file;
+    }
 
     //setter
     public void setTitle(String title){
@@ -68,7 +73,11 @@ public class News {
         this.image = image;
     }
     public void view(){
-        //TODO: add cache path of the file
-        this.viewed = true;
+        if (!this.viewed) {
+            this.viewed = true;
+            //TODO: save the file locally
+            this.file = "test";
+            //TODO: get full scripts from the server
+        }
     }
 }
