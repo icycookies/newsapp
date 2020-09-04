@@ -27,7 +27,7 @@ import java.util.Map;
 
 public class HomePage extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
-    private String[] favor;
+    private ArrayList<String> favor;
     private String curCategory;
     private NewsList newsList;
     @Override
@@ -38,15 +38,18 @@ public class HomePage extends AppCompatActivity implements AdapterView.OnItemCli
         curCategory = "推荐";
         newsList = new NewsList(curCategory);
 
+        Intent intent = getIntent();
+
         fillCategory();
         bindEvents();
         loadHistory();
         loadFavor();
-        refresh();
+        if (intent.getBooleanExtra("reload_news", true))refresh();
     }
 
     private void fillCategory(){
         LinearLayout category_list = findViewById(R.id.category_list);
+        category_list.removeAllViews();
         for (final String category : favor){
             View view = LayoutInflater.from(this.getApplicationContext()).inflate(android.R.layout.simple_list_item_1, null);
             TextView textView = view.findViewById(android.R.id.text1);
