@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -44,13 +45,20 @@ public class HomePage extends AppCompatActivity implements AdapterView.OnItemCli
     }
 
     private void fillCategory(){
-        View view = LayoutInflater.from(this.getApplicationContext()).inflate()
-        for (String category : favor){
-
+        View category_list = findViewById(R.id.category_list);
+        for (final String category : favor){
+            View view = LayoutInflater.from(this.getApplicationContext()).inflate(android.R.layout.simple_list_item_1, null);
+            TextView textView = view.findViewById(android.R.id.text1);
+            textView.setText(category);
+            textView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    curCategory = category;
+                    refresh();
+                }
+            });
+            category_list.
         }
-        SimpleAdapter adapter = new SimpleAdapter(this, data, android.R.layout.simple_list_item_1,
-                new String[] {"category"},
-                new int[] {android.R.id.text1});
     }
 
     private void bindEvents(){
