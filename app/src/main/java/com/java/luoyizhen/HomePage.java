@@ -6,7 +6,9 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Layout;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -42,19 +44,13 @@ public class HomePage extends AppCompatActivity implements AdapterView.OnItemCli
     }
 
     private void fillCategory(){
-        ListView categoryList = this.findViewById(R.id.category_list);
-        List<Map<String, Object>> data = new ArrayList<>();
+        View view = LayoutInflater.from(this.getApplicationContext()).inflate()
         for (String category : favor){
-            HashMap<String, Object> item = new HashMap<>();
-            item.put("category", category);
-            data.add(item);
-            Log.i("category", category);
+
         }
         SimpleAdapter adapter = new SimpleAdapter(this, data, android.R.layout.simple_list_item_1,
                 new String[] {"category"},
                 new int[] {android.R.id.text1});
-        categoryList.setAdapter(adapter);
-        categoryList.setOnItemClickListener((AdapterView.OnItemClickListener) this);
     }
 
     private void bindEvents(){
