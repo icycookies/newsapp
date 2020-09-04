@@ -14,6 +14,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -33,7 +34,7 @@ public class HomePage extends AppCompatActivity implements AdapterView.OnItemCli
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
-        favor = Server.getFavor();
+        favor = Server.getFavor();                          //暂定如此，用文件保存吧
         curCategory = "推荐";
         newsList = new NewsList(curCategory);
 
@@ -45,7 +46,7 @@ public class HomePage extends AppCompatActivity implements AdapterView.OnItemCli
     }
 
     private void fillCategory(){
-        View category_list = findViewById(R.id.category_list);
+        LinearLayout category_list = findViewById(R.id.category_list);
         for (final String category : favor){
             View view = LayoutInflater.from(this.getApplicationContext()).inflate(android.R.layout.simple_list_item_1, null);
             TextView textView = view.findViewById(android.R.id.text1);
@@ -54,10 +55,11 @@ public class HomePage extends AppCompatActivity implements AdapterView.OnItemCli
                 @Override
                 public void onClick(View v) {
                     curCategory = category;
+                    Log.i("category_change", curCategory);
                     refresh();
                 }
             });
-            category_list.
+            category_list.addView(view);
         }
     }
 
@@ -71,20 +73,22 @@ public class HomePage extends AppCompatActivity implements AdapterView.OnItemCli
                 fillCategory();
             }
         });
-        //上拉刷新
-        SwipeRefreshLayout swipeRefreshLayout = findViewById(R.id.content);
+        //下拉刷新
+        final SwipeRefreshLayout swipeRefreshLayout = findViewById(R.id.content);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
+                        swipeRefreshLayout.setRefreshing(false);
+                        Log.i("event", "下拉刷新成功");
                         refresh();
                     }
                 }, 2000);
             }
         });
-        //下拉加载
+        //上拉加载
         ListView listView = this.findViewById(R.id.newslist);
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
@@ -117,7 +121,6 @@ public class HomePage extends AppCompatActivity implements AdapterView.OnItemCli
 
     private void refresh() {
         ListView newsListView = this.findViewById(R.id.newslist);
-        //TODO get a list of news
         newsList.setCategory(curCategory);
         newsList.getFeed();
         SimpleAdapter adapter = new SimpleAdapter(this, newsList.getAllItems(), android.R.layout.simple_list_item_2,
@@ -138,8 +141,6 @@ public class HomePage extends AppCompatActivity implements AdapterView.OnItemCli
             intent.putExtra("file", clicked.getFile());
             startActivity(intent);
         } else {
-            curCategory = favor[position];
-            refresh();
         }
     }
 }
