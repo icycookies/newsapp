@@ -6,10 +6,12 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.HorizontalScrollView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
@@ -21,15 +23,16 @@ import java.util.Map;
 
 public class HomePage extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
-    private String[] favor = {"收藏", "推荐", "疫情概况", "抗疫政策", "数据", "知疫学者"};
+    private String[] favor;
     private String curCategory;
-    private NewsList list;
+    private NewsList newsList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
+        favor = Server.getFavor();
         curCategory = "推荐";
-        list = new NewsList(curCategory);
+        newsList = new NewsList(curCategory);
 
         fillCategory();
         bindEvents();
@@ -39,12 +42,13 @@ public class HomePage extends AppCompatActivity implements AdapterView.OnItemCli
     }
 
     private void fillCategory(){
-        ListView categoryList = this.findViewById(R.id.category);
+        ListView categoryList = this.findViewById(R.id.category_list);
         List<Map<String, Object>> data = new ArrayList<>();
         for (String category : favor){
             HashMap<String, Object> item = new HashMap<>();
             item.put("category", category);
             data.add(item);
+            Log.i("category", category);
         }
         SimpleAdapter adapter = new SimpleAdapter(this, data, android.R.layout.simple_list_item_1,
                 new String[] {"category"},
@@ -76,9 +80,9 @@ public class HomePage extends AppCompatActivity implements AdapterView.OnItemCli
                 }, 2000);
             }
         });
-        //TODO:下拉加载
-        ListView list = this.findViewById(R.id.newslist);
-        list.setOnScrollListener(new AbsListView.OnScrollListener() {
+        //下拉加载
+        ListView listView = this.findViewById(R.id.newslist);
+        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
 
@@ -86,10 +90,19 @@ public class HomePage extends AppCompatActivity implements AdapterView.OnItemCli
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-
+                if (firstVisibleItem + visibleItemCount >= totalItemCount){
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            newsList.getMore();
+                            refresh();
+                        }
+                    }, 2000);
+                }
             }
         });
     }
+
     private void loadHistory(){
 
     }
@@ -99,21 +112,21 @@ public class HomePage extends AppCompatActivity implements AdapterView.OnItemCli
     }
 
     private void refresh() {
-        ListView newsList = this.findViewById(R.id.newslist);
+        ListView newsListView = this.findViewById(R.id.newslist);
         //TODO get a list of news
-        list.setCategory(curCategory);
-        list.getFeed();
-        SimpleAdapter adapter = new SimpleAdapter(this, list.getAllItems(), android.R.layout.simple_list_item_2,
+        newsList.setCategory(curCategory);
+        newsList.getFeed();
+        SimpleAdapter adapter = new SimpleAdapter(this, newsList.getAllItems(), android.R.layout.simple_list_item_2,
                 new String[] {"title", "date"},
                 new int[] {android.R.id.text1, android.R.id.text2});
-        newsList.setAdapter(adapter);
-        newsList.setOnItemClickListener((AdapterView.OnItemClickListener) this);
+        newsListView.setAdapter(adapter);
+        newsListView.setOnItemClickListener((AdapterView.OnItemClickListener) this);
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if (parent == findViewById(R.id.newslist)) {
-            News clicked = list.getItem(position);
+            News clicked = newsList.getItem(position);
             clicked.view();
             Intent intent = new Intent();
             intent.setClass(this, ItemNewsActivity.class);

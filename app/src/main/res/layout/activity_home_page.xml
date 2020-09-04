@@ -26,7 +26,12 @@
                     android:id="@+id/category"
                     android:layout_width="match_parent"
                     android:layout_height="30dp"
-                    android:layout_weight="0.7"/>
+                    android:layout_weight="0.7">
+                    <ListView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/category_list"/>
+                </HorizontalScrollView>
 
                 <Button
                     android:id="@+id/categoryOption"
@@ -50,5 +55,16 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/newslist" />
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/footer"
+        app:layout_constraintTop_toBottomOf="@id/body">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:gravity="center"
+            android:text="正在努力加载中"/>
     </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,10 +4,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.webkit.WebView;
 
 public class ItemNewsActivity extends AppCompatActivity {
     private String url;
     private String file;
+    private String content;
+    private WebView webView;
+    private boolean networkAvail;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -20,9 +24,33 @@ public class ItemNewsActivity extends AppCompatActivity {
     }
 
     private void setupViews(){
-
+        webView = findViewById(R.id.wrapper);
+        webView.getSettings().setDomStorageEnabled(true);
+        webView.getSettings().setJavaScriptEnabled(true);
     }
+
     private void showContent(){
-        //TODO: use webview to show the news
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    content = Server.getHtml(url);
+                }catch (ExceptionInInitializerError e){
+                    networkAvail = false;
+                }
+            }
+        });
+        t.start();
+        try {
+            t.join();
+        }catch (InterruptedException e){
+            e.printStackTrace();
+        }
+        if (/*改为文件存在*/false){
+
+        }else{
+            if (!networkAvail)content = "请检查网络连接";
+            webView.loadData(content, "text/html", Server.getCharset(url));
+        }
     }
 }

@@ -16,7 +16,10 @@ public class NewsList {
         this.category = category;
     }
     public void getFeed(){
-        //TODO: get news from the server
+        //TODO: empty the list and get news from the server
+    }
+    public void getMore(){
+        //TODO: get more news
     }
     public News getItem(int position){
         return news.get(position);

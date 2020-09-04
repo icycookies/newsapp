@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 public class CategoryActivity extends AppCompatActivity {
 
+    private String[] favor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
