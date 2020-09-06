@@ -18,8 +18,7 @@
         android:supportsRtl="true"
         android:usesCleartextTraffic="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".VisualizeActivity"></activity>
-        <activity android:name=".CategoryActivity" />
+        <activity android:name=".CategoryActivity"></activity>
         <activity android:name=".ItemNewsActivity" />
         <activity android:name=".HomePage" />
         <activity android:name=".OpeningActivity" />

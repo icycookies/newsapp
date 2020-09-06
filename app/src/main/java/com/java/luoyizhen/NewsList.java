@@ -14,7 +14,7 @@ import java.io.Reader;
 import java.net.URL;
 import java.nio.charset.Charset;
 
-//import java.net.http;
+//import org.asynchttpclient.*;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -54,6 +54,17 @@ public class NewsList {
                         ""
                     );
                     news.add(news1);
+                    String url1 = "https://covid-dashboard-api.aminer.cn/event/" + o.getString("_id");
+                    InputStream is1 = new URL(url1).openStream();
+                    BufferedReader rd1 = new BufferedReader(new InputStreamReader(is1, Charset.forName("UTF-8")));
+                    JSONObject json1 = new JSONObject(readAll(rd1));
+                    try {
+                        news1.setUrl(json1.getJSONObject("data").getJSONArray("urls").getString(0));
+                        news1.setPublisher(json1.getJSONObject("data").getString("source"));
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             } finally {
                 is.close();
