@@ -95,6 +95,7 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
                 Intent intent = new Intent();
                 intent.putExtra("reload_news", false);
                 this.finish();
+                //test
             default:
                 return super.onOptionsItemSelected(item);
         }
