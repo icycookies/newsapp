@@ -21,4 +21,9 @@ public class Server {
     static public void setFavor(ArrayList<String> favor){
         //TODO: set favored categories
     }
+    static public CovidData getCovidData(){
+        //TODO: get data for visualization
+        //format: ref CovidData.java
+        return null;
+    }
 }
