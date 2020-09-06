@@ -14,7 +14,7 @@ import java.io.Reader;
 import java.net.URL;
 import java.nio.charset.Charset;
 
-import org.asynchttpclient.*;
+//import org.asynchttpclient.*;
 
 import org.json.JSONArray;
 import org.json.JSONException;
