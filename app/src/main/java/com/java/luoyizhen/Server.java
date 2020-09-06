@@ -48,6 +48,9 @@ public class Server {
     static public void setFavor(ArrayList<String> favor){
         //TODO: set favored categories
     }
+    static public CovidData getCovidData(){
+        return null;
+    }
     private static String readAll(Reader rd) throws IOException {
         StringBuilder sb = new StringBuilder();
         int cp;

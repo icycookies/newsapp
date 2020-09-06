@@ -33,8 +33,6 @@ public class NewsList {
     }
     public void getFeed(){
         Log.i("wtf","wdnm1");
-//        AsyncHttpClient client = Dsl.asyncHttpClient();
-//        BoundRequestBuilder getRequest = client.prepareGet("http://www.baeldung.com");
         try {
             InputStream is = new URL("https://covid-dashboard.aminer.cn/api/dist/events.json").openStream();
             try {
@@ -48,7 +46,7 @@ public class NewsList {
                     News news1 = new News(
                         o.getString("title"),
                         o.getString("time"),
-                        "Source: unknown",
+                        "wdnmd",
                         "http://example.com",
                         "The quick brown fox jumps over a lazy dog.",
                         new String[] {"http://p5.itc.cn/q_70/images03/20200807/9e87c806515a41aeb0ba94eae6bfdb30.png"},
