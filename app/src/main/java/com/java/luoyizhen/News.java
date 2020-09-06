@@ -1,5 +1,7 @@
 package com.java.luoyizhen;
 
+import android.util.Log;
+
 public class News {
     private String title;               //新闻标题
     private String date;                //发布时间
@@ -74,6 +76,7 @@ public class News {
     }
     public void view(){
         if (!this.viewed) {
+            Log.i("aha", "view");
             this.viewed = true;
             //TODO: save the file locally
             this.file = "test";
