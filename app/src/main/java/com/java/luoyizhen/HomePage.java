@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -96,20 +97,24 @@ public class HomePage extends AppCompatActivity implements AdapterView.OnItemCli
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
-
+                Log.i("event", "really scrolled");
+                if (scrollState == SCROLL_STATE_IDLE){
+                    boolean toBottom = view.getLastVisiblePosition() == view.getCount() - 1;
+                    if (toBottom){
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                newsList.getMore();
+                                //refresh();
+                            }
+                        }, 2000);
+                    }
+                }
             }
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                if (firstVisibleItem + visibleItemCount >= totalItemCount){
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            newsList.getMore();
-                            refresh();
-                        }
-                    }, 2000);
-                }
+                Log.i("event", "scrolled");
             }
         });
     }
@@ -125,7 +130,24 @@ public class HomePage extends AppCompatActivity implements AdapterView.OnItemCli
     private void refresh() {
         ListView newsListView = this.findViewById(R.id.newslist);
         newsList.setCategory(curCategory);
-        newsList.getFeed();
+
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    newsList.getFeed();
+                    Log.i("orz1", "orz");
+                }catch (ExceptionInInitializerError e){
+                    Toast.makeText(getApplicationContext(),"请检查网络设置", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        t.start();
+        try {
+            t.join();
+        }catch (InterruptedException e){
+            e.printStackTrace();
+        }
         SimpleAdapter adapter = new SimpleAdapter(this, newsList.getAllItems(), android.R.layout.simple_list_item_2,
                 new String[] {"title", "date"},
                 new int[] {android.R.id.text1, android.R.id.text2});

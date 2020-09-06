@@ -46,11 +46,13 @@ public class NewsList {
             false,
             ""
         );
-        news.clear();
-        news.add(news1);
+        //news.clear();
+        for (int i = 0; i < 10; i++)
+            news.add(news1);
     }
     public void getMore(){
         //TODO: get more news
+        Log.i("getmore", "getmore");
     }
     public News getItem(int position){
         return news.get(position);
