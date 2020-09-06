@@ -44,7 +44,7 @@
             </TableRow>
         </TableLayout>
     </RelativeLayout>
-    <RelativeLayout
+    <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/header"
@@ -57,17 +57,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/newslist" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:gravity="center"
+                android:text="正在努力加载中"/>
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-    </RelativeLayout>
+
+    </TableLayout>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/footer"
         app:layout_constraintTop_toBottomOf="@id/body">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:gravity="center"
-            android:text="正在努力加载中"/>
+
     </RelativeLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
