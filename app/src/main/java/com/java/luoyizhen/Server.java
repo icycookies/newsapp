@@ -8,8 +8,8 @@ public class Server {
         //TODO: get html code from url
         return null;
     }
-    static public String getCharset(String url){
-        //TODO: get charset of url
+    static public String getCharset(String html){
+        //TODO: get charset of page
         return null;
     }
     static public ArrayList<String> getFavor(){

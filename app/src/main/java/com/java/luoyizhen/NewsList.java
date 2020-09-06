@@ -14,6 +14,8 @@ import java.io.Reader;
 import java.net.URL;
 import java.nio.charset.Charset;
 
+import java.net.http;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -29,13 +31,25 @@ public class NewsList {
         this.category = category;
     }
     public void getFeed(){
+        Log.i("wtf","wdnm");
+        try {
+            InputStream is = new URL("https://covid-dashboard.aminer.cn/api/dist/events.json").openStream();
+            try {
+                BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+                String jsonText = readAll(rd);
+                JSONObject json = new JSONObject(jsonText);
+                Log.i("json",json.toString());
+            } finally {
+                is.close();
+            }
+        }
 //        try {
 //            JSONObject json = readJsonFromUrl("https://covid-dashboard.aminer.cn/api/dist/events.json");
 //            Log.i("JSON",json.toString());
 //        }
-//        catch (Exception e) {
-//            e.printStackTrace();
-//        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
         News news1 = new News(
             "Firefox 79稳定版导致部分Mac用户陷入不明卡顿",
             "2020-08-07 16:18",
@@ -46,7 +60,7 @@ public class NewsList {
             false,
             ""
         );
-        news.clear();
+//        news.clear();
         news.add(news1);
     }
     public void getMore(){
