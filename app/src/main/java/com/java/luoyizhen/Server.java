@@ -1,16 +1,43 @@
 package com.java.luoyizhen;
 
+import android.util.Log;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
+
 
 public class Server {
     static public String getHtml(String url){
         //TODO: get html code from url
-        return null;
+        String text = "Error";
+        try {
+            Log.i("URL!",url);
+            InputStream is = new URL(url).openStream();
+            try {
+                BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+                text = readAll(rd);
+            } finally {
+                is.close();
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return text;
     }
     static public String getCharset(String html){
         //TODO: get charset of page
-        return null;
+        return "utf-8";
     }
     static public ArrayList<String> getFavor(){
         //TODO: get favored categories
@@ -20,5 +47,13 @@ public class Server {
     }
     static public void setFavor(ArrayList<String> favor){
         //TODO: set favored categories
+    }
+    private static String readAll(Reader rd) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        int cp;
+        while ((cp = rd.read()) != -1) {
+            sb.append((char) cp);
+        }
+        return sb.toString();
     }
 }
