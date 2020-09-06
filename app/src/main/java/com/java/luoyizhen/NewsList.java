@@ -70,6 +70,9 @@ public class NewsList {
     public News getItem(int position){
         return news.get(position);
     }
+    public ArrayList<News> getAll(){
+        return news;
+    }
     public ArrayList<Map<String, Object>> getAllItems(){
         ArrayList<Map<String, Object>> data = new ArrayList<>();
         for (News piece : news){

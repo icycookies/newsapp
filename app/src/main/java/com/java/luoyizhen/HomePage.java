@@ -1,8 +1,10 @@
 package com.java.luoyizhen;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -93,28 +95,24 @@ public class HomePage extends AppCompatActivity implements AdapterView.OnItemCli
             }
         });
         //上拉加载
-        ListView listView = this.findViewById(R.id.newslist);
-        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+        final View scrollView = findViewById(R.id.scroll0);
+        scrollView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
             @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-                Log.i("event", "really scrolled");
-                if (scrollState == SCROLL_STATE_IDLE){
-                    boolean toBottom = view.getLastVisiblePosition() == view.getCount() - 1;
-                    if (toBottom){
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                newsList.getMore();
-                                //refresh();
-                            }
-                        }, 2000);
-                    }
+            public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                Log.i("scrollY", Integer.toString(scrollY));
+                Log.i("parent", Integer.toString(scrollView.getHeight()));
+                View view = findViewById(R.id.newslist);
+                Log.i("child",Integer.toString(view.getHeight()));
+                if (scrollY + v.getHeight() == view.getHeight()){
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            newsList.getMore();
+                            //refresh();
+                            Log.i("more", "more");
+                        }
+                    }, 2000);
                 }
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                Log.i("event", "scrolled");
             }
         });
     }
@@ -128,7 +126,7 @@ public class HomePage extends AppCompatActivity implements AdapterView.OnItemCli
     }
 
     private void refresh() {
-        ListView newsListView = this.findViewById(R.id.newslist);
+        LinearLayout newsListView = this.findViewById(R.id.newslist);
         newsList.setCategory(curCategory);
 
         Thread t = new Thread(new Runnable() {
@@ -148,11 +146,47 @@ public class HomePage extends AppCompatActivity implements AdapterView.OnItemCli
         }catch (InterruptedException e){
             e.printStackTrace();
         }
-        SimpleAdapter adapter = new SimpleAdapter(this, newsList.getAllItems(), android.R.layout.simple_list_item_2,
-                new String[] {"title", "date"},
-                new int[] {android.R.id.text1, android.R.id.text2});
-        newsListView.setAdapter(adapter);
-        newsListView.setOnItemClickListener((AdapterView.OnItemClickListener) this);
+        //android.R.layout.simple_list_item_2
+        for (final News news : newsList.getAll()){
+            final View view = LayoutInflater.from(this.getApplicationContext()).inflate(R.layout.news_item, null);
+            final TextView title = view.findViewById(R.id.title);
+            final TextView publisher = view.findViewById(R.id.publisher);
+            final TextView date = view.findViewById(R.id.date);
+
+            title.setText(news.getTitle());
+            publisher.setText(news.getPublisher());
+            date.setText(news.getDate());
+
+            int color = ContextCompat.getColor(this, R.color.colorRead);
+            if (news.isViewed()){
+                Log.i("orz", "viewed");
+                title.setTextColor(color);
+                publisher.setTextColor(color);
+                date.setTextColor(color);
+            }
+
+            final Context context = this.getApplicationContext();
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    news.view();
+                    int color = ContextCompat.getColor(context, R.color.colorRead);
+                    title.setTextColor(color);
+                    publisher.setTextColor(color);
+                    date.setTextColor(color);
+                    Intent intent = new Intent();
+                    intent.setClass(context, ItemNewsActivity.class);
+                    intent.putExtra("url", news.getUrl());
+                    intent.putExtra("file", news.getFile());
+                    startActivity(intent);
+                }
+            });
+            newsListView.addView(view);
+        }
+        View view = LayoutInflater.from(this.getApplicationContext()).inflate(android.R.layout.simple_list_item_1, null);
+        TextView textView = view.findViewById(android.R.id.text1);
+        textView.setText("正在努力加载中...");
+        newsListView.addView(view);
     }
 
     @Override
