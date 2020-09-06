@@ -32,6 +32,7 @@ public class ItemNewsActivity extends AppCompatActivity {
     }
 
     private void showContent(){
+        networkAvail = true;
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
