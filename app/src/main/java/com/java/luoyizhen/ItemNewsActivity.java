@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.webkit.WebView;
 
 public class ItemNewsActivity extends AppCompatActivity {
@@ -19,6 +20,7 @@ public class ItemNewsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         url = intent.getStringExtra("url");
         file = intent.getStringExtra("file");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setupViews();
         showContent();
     }
@@ -51,6 +53,18 @@ public class ItemNewsActivity extends AppCompatActivity {
         }else{
             if (!networkAvail)content = "请检查网络连接";
             webView.loadData(content, "text/html", Server.getCharset(url));
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch (item.getItemId()){
+            case android.R.id.home:
+                Intent intent = new Intent();
+                intent.putExtra("reload_news", false);
+                this.finish();
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 }
