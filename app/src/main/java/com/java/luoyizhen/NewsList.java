@@ -94,9 +94,10 @@ public class NewsList {
             e.printStackTrace();
         }
     }
-    public void getMore(){
+    public NewsList getMore(){
         //TODO: get more news
         Log.i("getmore", "getmore");
+        return null;
     }
     public News getItem(int position){
         return news.get(position);

@@ -51,6 +51,13 @@ public class Server {
     static public void setFavor(ArrayList<String> favor){
         //TODO: set favored categories
     }
+    static public void addHistory(News news){
+        //TODO: add news to history
+    }
+    static public NewsList getHistory(){
+        //TODO: return history news
+        return null;
+    }
     static public CovidData getCovidData(){
         CovidData coviddata = null;
         try {
@@ -117,4 +124,5 @@ public class Server {
         }
         return sb.toString();
     }
+
 }
