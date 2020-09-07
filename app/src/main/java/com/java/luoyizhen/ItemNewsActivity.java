@@ -33,7 +33,6 @@ public class ItemNewsActivity extends AppCompatActivity {
         webView = findViewById(R.id.wrapper);
         webView.getSettings().setDomStorageEnabled(true);
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.setWebChromeClient(new WebChromeClient());
         webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         webView.getSettings().setBlockNetworkImage(false);
         webView.getSettings().setAppCacheEnabled(true);
@@ -65,7 +64,7 @@ public class ItemNewsActivity extends AppCompatActivity {
             if (!networkAvail)content = "请检查网络连接";
             //webView.loadData(content, "text/html", "gb2312");
             Log.i("=========html============", content);
-            webView.loadDataWithBaseURL(, content, "text/html", "utf-8", null);
+            webView.loadDataWithBaseURL(null, content, "text/html", "utf-8", null);
         }
     }
 
