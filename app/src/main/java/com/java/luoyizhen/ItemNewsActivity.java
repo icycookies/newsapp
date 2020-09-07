@@ -3,8 +3,12 @@ package com.java.luoyizhen;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 
 public class ItemNewsActivity extends AppCompatActivity {
@@ -29,6 +33,12 @@ public class ItemNewsActivity extends AppCompatActivity {
         webView = findViewById(R.id.wrapper);
         webView.getSettings().setDomStorageEnabled(true);
         webView.getSettings().setJavaScriptEnabled(true);
+        webView.setWebChromeClient(new WebChromeClient());
+        webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        webView.getSettings().setBlockNetworkImage(false);
+        webView.getSettings().setAppCacheEnabled(true);
+        webView.getSettings().setSupportZoom(true);
+        webView.getSettings().setBuiltInZoomControls(true);
     }
 
     private void showContent(){
@@ -53,7 +63,9 @@ public class ItemNewsActivity extends AppCompatActivity {
 
         }else{
             if (!networkAvail)content = "请检查网络连接";
-            webView.loadData(content, "text/html", Server.getCharset(url));
+            //webView.loadData(content, "text/html", "gb2312");
+            Log.i("=========html============", content);
+            webView.loadDataWithBaseURL(, content, "text/html", "utf-8", null);
         }
     }
 
