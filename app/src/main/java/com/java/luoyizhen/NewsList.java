@@ -51,7 +51,7 @@ public class NewsList {
                     final News news1 = new News(
                         o.getString("title"),
                         o.getString("time"),
-                        "wdnmd",
+                        "Source: unknown",
                         "http://example.com",
                         "The quick brown fox jumps over a lazy dog.",
                         new String[] {"http://p5.itc.cn/q_70/images03/20200807/9e87c806515a41aeb0ba94eae6bfdb30.png"},

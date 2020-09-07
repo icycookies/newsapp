@@ -12,13 +12,16 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Map;
 
 
 public class Server {
     static public String getHtml(String url){
-        //TODO: get html code from url
+        // get html code from url
         String text = "Error";
         try {
             Log.i("URL!",url);
@@ -49,6 +52,61 @@ public class Server {
         //TODO: set favored categories
     }
     static public CovidData getCovidData(){
+        CovidData coviddata = null;
+        try {
+            // fetch news list
+            InputStream is = new URL("https://covid-dashboard.aminer.cn/api/dist/epidemic.json").openStream();
+            ArrayList<Map.Entry<String, Integer>> province = new ArrayList<>(), country = new ArrayList<>();
+            try {
+                // parse JSON response
+                BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+                String jsonText = readAll(rd);
+                JSONObject json = new JSONObject(jsonText);
+                Iterator<String> keys = json.keys();
+                while(keys.hasNext()) {
+                    String name = keys.next();
+                    if (json.get(name) instanceof JSONObject) {
+                        // do something with jsonObject here
+                        int level = 0;
+                        for (int i = 0; i < name.length(); i++) {
+                            if (name.charAt(i) == '|') {
+                                level++;
+                            }
+                        }
+                        JSONArray data = json.getJSONObject(name).getJSONArray("data");
+                        JSONArray lastdata = data.getJSONArray(data.length() - 1);
+                        int contracted = lastdata.getInt(0);
+                        if (level == 0) {
+                            country.add(new AbstractMap.SimpleEntry<String, Integer>(name, contracted));
+
+                        }
+                        if (level == 1) {
+                            province.add(new AbstractMap.SimpleEntry<String, Integer>(name, contracted));
+                        }
+                    }
+                }
+                JSONArray data = json.getJSONObject("China").getJSONArray("data");
+                JSONArray lastdata = data.getJSONArray(data.length() - 1);
+                int confirmed = lastdata.getInt(0);
+                int cured = lastdata.getInt(2);
+                int dead = lastdata.getInt(3);
+                coviddata = new CovidData(
+                        confirmed,
+                        confirmed-cured-dead,
+                        dead,
+                        province,
+                        country,
+                        null,
+                        null
+                );
+            } finally {
+                is.close();
+            }
+            return coviddata;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
         return null;
     }
     private static String readAll(Reader rd) throws IOException {
