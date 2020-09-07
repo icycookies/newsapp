@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,31 +23,36 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.mikephil.charting.charts.LineChart;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class HomePage extends AppCompatActivity implements AdapterView.OnItemClickListener {
+public class HomePage extends AppCompatActivity {
 
     private ArrayList<String> favor;
     private String curCategory;
     private NewsList newsList;
+    private NewsList historyNewsList;
+    private NewsList[] moreNews = {null};
+    private Context context;
+    private LinearLayout newsListView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
-        favor = Server.getFavor();                          //暂定如此，用文件保存吧
+        favor = Server.getFavor();
         curCategory = "推荐";
         newsList = new NewsList(curCategory);
-
+        newsListView = this.findViewById(R.id.newslist);
+        context = this.getApplicationContext();
         Intent intent = getIntent();
 
         fillCategory();
         bindEvents();
-        loadHistory();
-        loadFavor();
         if (intent.getBooleanExtra("reload_news", true))refresh();
     }
 
@@ -61,6 +67,7 @@ public class HomePage extends AppCompatActivity implements AdapterView.OnItemCli
                 @Override
                 public void onClick(View v) {
                     curCategory = category;
+                    newsList.setCategory(curCategory);
                     Log.i("category_change", curCategory);
                     refresh();
                 }
@@ -104,102 +111,119 @@ public class HomePage extends AppCompatActivity implements AdapterView.OnItemCli
                 View view = findViewById(R.id.newslist);
                 Log.i("child",Integer.toString(view.getHeight()));
                 if (scrollY + v.getHeight() == view.getHeight()){
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            newsList.getMore();
-                            //refresh();
-                            Log.i("more", "more");
-                        }
-                    }, 2000);
+                    add();
+                    Log.i("more", "more");
                 }
             }
         });
     }
 
-    private void loadHistory(){
+    final private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg){
+            NewsList selectedList = null;
+            if (msg.what == 0){
+                newsListView.removeAllViews();
+                selectedList = newsList;
+                Log.i("orz1", "orz");
 
-    }
-
-    private void loadFavor() {
-
-    }
+            }else if (msg.what == 1) {
+                newsListView.removeViewAt(newsListView.getChildCount() - 1);
+                selectedList = moreNews[0];
+            }else{
+                newsListView.removeAllViews();
+                selectedList = historyNewsList;
+            }
+            for (final News news : selectedList.getAll()){
+                addNews(newsListView, news);
+            }
+            View view = LayoutInflater.from(context).inflate(android.R.layout.simple_list_item_1, null);
+            TextView textView = view.findViewById(android.R.id.text1);
+            textView.setText("正在努力加载中...");
+            newsListView.addView(view);
+        }
+    };
 
     private void refresh() {
-        LinearLayout newsListView = this.findViewById(R.id.newslist);
-        newsList.setCategory(curCategory);
-
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
                 try{
-                    newsList.getFeed();
-                    Log.i("orz1", "orz");
+                    Message msg = new Message();
+                    if (curCategory == "历史") {
+                        historyNewsList = Server.getHistory();
+                        msg.what = 2;
+                    }else{
+                        newsList.getFeed();
+                        msg.what = 0;
+                    }
+                    handler.sendMessage(msg);
                 }catch (ExceptionInInitializerError e){
                     Toast.makeText(getApplicationContext(),"请检查网络设置", Toast.LENGTH_SHORT).show();
                 }
             }
         });
         t.start();
-        try {
-            t.join();
-        }catch (InterruptedException e){
-            e.printStackTrace();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        }, 2000);
+    }
+
+    private void add(){
+        moreNews = new NewsList[]{null};
+        final Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    moreNews[0] = newsList.getMore();
+                    Message msg = new Message();
+                    msg.what = 1;
+                }catch (ExceptionInInitializerError e){
+                    Toast.makeText(getApplicationContext(),"请检查网络设置", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        t.start();
+    }
+
+    private void addNews(LinearLayout newsListView, final News news){
+        final View view = LayoutInflater.from(this.getApplicationContext()).inflate(R.layout.news_item, null);
+        final TextView title = view.findViewById(R.id.title);
+        final TextView publisher = view.findViewById(R.id.publisher);
+        final TextView date = view.findViewById(R.id.date);
+
+        title.setText(news.getTitle());
+        publisher.setText(news.getPublisher());
+        date.setText(news.getDate());
+
+        int color = ContextCompat.getColor(this, R.color.colorRead);
+        if (news.isViewed()){
+            Log.i("orz", "viewed");
+            title.setTextColor(color);
+            publisher.setTextColor(color);
+            date.setTextColor(color);
         }
-        //android.R.layout.simple_list_item_2
-        for (final News news : newsList.getAll()){
-            final View view = LayoutInflater.from(this.getApplicationContext()).inflate(R.layout.news_item, null);
-            final TextView title = view.findViewById(R.id.title);
-            final TextView publisher = view.findViewById(R.id.publisher);
-            final TextView date = view.findViewById(R.id.date);
 
-            title.setText(news.getTitle());
-            publisher.setText(news.getPublisher());
-            date.setText(news.getDate());
-
-            int color = ContextCompat.getColor(this, R.color.colorRead);
-            if (news.isViewed()){
-                Log.i("orz", "viewed");
+        final Context context = this.getApplicationContext();
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                news.view();
+                Server.addHistory(news);
+                int color = ContextCompat.getColor(context, R.color.colorRead);
                 title.setTextColor(color);
                 publisher.setTextColor(color);
                 date.setTextColor(color);
+                Intent intent = new Intent();
+                intent.setClass(context, ItemNewsActivity.class);
+                intent.putExtra("url", news.getUrl());
+                intent.putExtra("file", news.getFile());
+                startActivity(intent);
             }
-
-            final Context context = this.getApplicationContext();
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    news.view();
-                    int color = ContextCompat.getColor(context, R.color.colorRead);
-                    title.setTextColor(color);
-                    publisher.setTextColor(color);
-                    date.setTextColor(color);
-                    Intent intent = new Intent();
-                    intent.setClass(context, ItemNewsActivity.class);
-                    intent.putExtra("url", news.getUrl());
-                    intent.putExtra("file", news.getFile());
-                    startActivity(intent);
-                }
-            });
-            newsListView.addView(view);
-        }
-        View view = LayoutInflater.from(this.getApplicationContext()).inflate(android.R.layout.simple_list_item_1, null);
-        TextView textView = view.findViewById(android.R.id.text1);
-        textView.setText("正在努力加载中...");
+        });
         newsListView.addView(view);
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        if (parent == findViewById(R.id.newslist)) {
-            News clicked = newsList.getItem(position);
-            clicked.view();
-            Intent intent = new Intent();
-            intent.setClass(this, ItemNewsActivity.class);
-            intent.putExtra("url", clicked.getUrl());
-            intent.putExtra("file", clicked.getFile());
-            startActivity(intent);
-        } else {
-        }
     }
 }

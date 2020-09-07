@@ -24,7 +24,8 @@ import org.json.JSONObject;
 public class NewsList {
     private String category;
     private ArrayList<News> news;
-    JSONArray datas;
+    private JSONArray datas;
+    private int offset = 0;
 
     NewsList(String category){
         this.category = category;
@@ -57,7 +58,11 @@ public class NewsList {
                         BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
                         JSONObject json = new JSONObject(readAll(rd));
                         news1.setUrl(json.getJSONObject("data").getJSONArray("urls").getString(0));
-                        news1.setPublisher(json.getJSONObject("data").getString("source"));
+                        try {
+                            news1.setPublisher(json.getJSONObject("data").getString("source"));
+                        }
+                        catch (Exception e) {
+                        }
                     }
                     catch (Exception e) {
                         e.printStackTrace();
@@ -92,16 +97,16 @@ public class NewsList {
         catch (Exception e) {
             e.printStackTrace();
         }
-        news.clear();
+        offset = 0;
         getMore();
     }
-    public void getMore(){
+    public NewsList getMore(){
         // return next 10 entries of news list
+        news.clear();
         try {
-            int start = news.size();
             int n = datas.length();
             ArrayList<Thread> threadpool = new ArrayList<>();
-            for (int i=start; i<n && i<start+10; ++i) {
+            for (int i=offset; i<n && i<offset+10; ++i) {
                 Log.i("trying adding news #", Integer.toString(i));
                 // extract title etc,.
                 final JSONObject o = datas.getJSONObject(i);
@@ -115,10 +120,12 @@ public class NewsList {
                     e.printStackTrace();
                 }
             }
+            offset += 10;
         }
         catch (Exception e) {
             e.printStackTrace();
         }
+        return this;
     }
     public News getItem(int position){
         return news.get(position);
