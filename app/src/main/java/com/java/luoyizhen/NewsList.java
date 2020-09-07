@@ -1,6 +1,7 @@
 package com.java.luoyizhen;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,16 +35,20 @@ public class NewsList {
     public void getFeed(){
         Log.i("wtf","wdnm1");
         try {
+            // fetch news list
             InputStream is = new URL("https://covid-dashboard.aminer.cn/api/dist/events.json").openStream();
             try {
+                // parse JSON response
                 BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
                 String jsonText = readAll(rd);
                 JSONObject json = new JSONObject(jsonText);
                 JSONArray datas = json.getJSONArray("datas");
                 int n = datas.length();
+                ArrayList<Thread> threadpool = new ArrayList<>();
                 for (int i=0; i<n && i<10; ++i) {
-                    JSONObject o = datas.getJSONObject(i);
-                    News news1 = new News(
+                    // extract title etc,.
+                    final JSONObject o = datas.getJSONObject(i);
+                    final News news1 = new News(
                         o.getString("title"),
                         o.getString("time"),
                         "wdnmd",
@@ -54,15 +59,30 @@ public class NewsList {
                         ""
                     );
                     news.add(news1);
-                    String url1 = "https://covid-dashboard-api.aminer.cn/event/" + o.getString("_id");
-                    InputStream is1 = new URL(url1).openStream();
-                    BufferedReader rd1 = new BufferedReader(new InputStreamReader(is1, Charset.forName("UTF-8")));
-                    JSONObject json1 = new JSONObject(readAll(rd1));
+                    // fetch more info in background
+                    Thread t = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                String url = "https://covid-dashboard-api.aminer.cn/event/" + o.getString("_id");
+                                InputStream is = new URL(url).openStream();
+                                BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+                                JSONObject json = new JSONObject(readAll(rd));
+                                news1.setUrl(json.getJSONObject("data").getJSONArray("urls").getString(0));
+                                news1.setPublisher(json.getJSONObject("data").getString("source"));
+                            }
+                            catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                    t.start();
+                    threadpool.add(t);
+                }
+                for (Thread t: threadpool) {
                     try {
-                        news1.setUrl(json1.getJSONObject("data").getJSONArray("urls").getString(0));
-                        news1.setPublisher(json1.getJSONObject("data").getString("source"));
-                    }
-                    catch (Exception e) {
+                        t.join();
+                    } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
