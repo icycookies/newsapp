@@ -24,6 +24,7 @@ import org.json.JSONObject;
 public class NewsList {
     private String category;
     private ArrayList<News> news;
+    JSONArray datas;
 
     NewsList(String category){
         this.category = category;
@@ -32,7 +33,48 @@ public class NewsList {
     public void setCategory(String category){
         this.category = category;
     }
+    private Thread addNews(final JSONObject o)
+    {
+        try {
+            final News news1 = new News(
+                    o.getString("title"),
+                    o.getString("time"),
+                    "Source: unknown",
+                    "http://example.com",
+                    "The quick brown fox jumps over a lazy dog.",
+                    new String[]{"http://p5.itc.cn/q_70/images03/20200807/9e87c806515a41aeb0ba94eae6bfdb30.png"},
+                    false,
+                    ""
+            );
+            news.add(news1);
+            // fetch more info in background
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        String url = "https://covid-dashboard-api.aminer.cn/event/" + o.getString("_id");
+                        InputStream is = new URL(url).openStream();
+                        BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+                        JSONObject json = new JSONObject(readAll(rd));
+                        news1.setUrl(json.getJSONObject("data").getJSONArray("urls").getString(0));
+                        news1.setPublisher(json.getJSONObject("data").getString("source"));
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            t.start();
+            return t;
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+            return null;
+        }
+    }
     public void getFeed(){
+        // return first 10 entries of news list
         Log.i("wtf","wdnm1");
         try {
             // fetch news list
@@ -42,50 +84,7 @@ public class NewsList {
                 BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
                 String jsonText = readAll(rd);
                 JSONObject json = new JSONObject(jsonText);
-                JSONArray datas = json.getJSONArray("datas");
-                int n = datas.length();
-                ArrayList<Thread> threadpool = new ArrayList<>();
-                for (int i=0; i<n && i<10; ++i) {
-                    // extract title etc,.
-                    final JSONObject o = datas.getJSONObject(i);
-                    final News news1 = new News(
-                        o.getString("title"),
-                        o.getString("time"),
-                        "Source: unknown",
-                        "http://example.com",
-                        "The quick brown fox jumps over a lazy dog.",
-                        new String[] {"http://p5.itc.cn/q_70/images03/20200807/9e87c806515a41aeb0ba94eae6bfdb30.png"},
-                        false,
-                        ""
-                    );
-                    news.add(news1);
-                    // fetch more info in background
-                    Thread t = new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                String url = "https://covid-dashboard-api.aminer.cn/event/" + o.getString("_id");
-                                InputStream is = new URL(url).openStream();
-                                BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
-                                JSONObject json = new JSONObject(readAll(rd));
-                                news1.setUrl(json.getJSONObject("data").getJSONArray("urls").getString(0));
-                                news1.setPublisher(json.getJSONObject("data").getString("source"));
-                            }
-                            catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
-                    t.start();
-                    threadpool.add(t);
-                }
-                for (Thread t: threadpool) {
-                    try {
-                        t.join();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
+                datas = json.getJSONArray("datas");
             } finally {
                 is.close();
             }
@@ -93,10 +92,33 @@ public class NewsList {
         catch (Exception e) {
             e.printStackTrace();
         }
+        news.clear();
+        getMore();
     }
     public void getMore(){
-        //TODO: get more news
-        Log.i("getmore", "getmore");
+        // return next 10 entries of news list
+        try {
+            int start = news.size();
+            int n = datas.length();
+            ArrayList<Thread> threadpool = new ArrayList<>();
+            for (int i=start; i<n && i<start+10; ++i) {
+                Log.i("trying adding news #", Integer.toString(i));
+                // extract title etc,.
+                final JSONObject o = datas.getJSONObject(i);
+                Thread t = addNews(o);
+                threadpool.add(t);
+            }
+            for (Thread t: threadpool) {
+                try {
+                    t.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     public News getItem(int position){
         return news.get(position);

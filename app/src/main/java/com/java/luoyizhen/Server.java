@@ -36,6 +36,7 @@ public class Server {
         catch (Exception e) {
             e.printStackTrace();
         }
+        Log.i("=============html===============",text);
         return text;
     }
     static public String getCharset(String html){

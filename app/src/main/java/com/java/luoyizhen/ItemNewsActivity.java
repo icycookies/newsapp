@@ -53,7 +53,7 @@ public class ItemNewsActivity extends AppCompatActivity {
 
         }else{
             if (!networkAvail)content = "请检查网络连接";
-            webView.loadData(content, "text/html", Server.getCharset(url));
+            webView.loadData(content, "text/html", null);
         }
     }
 
