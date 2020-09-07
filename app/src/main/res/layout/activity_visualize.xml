@@ -97,12 +97,6 @@
                 android:layout_marginLeft="30dp"
                 android:layout_marginRight="30dp"
                 android:id="@+id/rank"/>
-            <com.github.mikephil.charting.charts.LineChart
-                android:layout_width="match_parent"
-                android:layout_height="300dp"
-                android:layout_marginLeft="30dp"
-                android:layout_marginRight="30dp"
-                android:id="@+id/count"/>
         </TableLayout>
     </ScrollView>
 
