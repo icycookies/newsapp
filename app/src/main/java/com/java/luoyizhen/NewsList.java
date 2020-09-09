@@ -24,8 +24,7 @@ import org.json.JSONObject;
 public class NewsList {
     private String category;
     private ArrayList<News> news;
-    private JSONArray datas;
-    private int offset = 0;
+    private int numpage = 0;
 
     NewsList(String category){
         this.category = category;
@@ -78,41 +77,37 @@ public class NewsList {
             return null;
         }
     }
-    public void getFeed(){
+    public void getFeed() {
         // return first 10 entries of news list
-        Log.i("wtf","wdnm1");
-        try {
-            // fetch news list
-            InputStream is = new URL("https://covid-dashboard.aminer.cn/api/dist/events.json").openStream();
-            try {
-                // parse JSON response
-                BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
-                String jsonText = readAll(rd);
-                JSONObject json = new JSONObject(jsonText);
-                datas = json.getJSONArray("datas");
-            } finally {
-                is.close();
-            }
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        offset = 0;
+        numpage = 0;
         getMore();
     }
     public NewsList getMore(){
-        // return next 10 entries of news list
+        numpage += 1;
+        Log.i("Getting news list page=", Integer.toString(numpage));
         news.clear();
         try {
-            int n = datas.length();
+            // fetch news list
+            JSONArray datas;
+            InputStream is = new URL("https://covid-dashboard.aminer.cn/api/events/list?page="+numpage).openStream();
+            try {
+                // parse JSON response -> datas
+                BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+                String jsonText = readAll(rd);
+                JSONObject json = new JSONObject(jsonText);
+                datas = json.getJSONArray("data");
+            } finally {
+                is.close();
+            }
+            // add news to list & launch detail-fetch threads
             ArrayList<Thread> threadpool = new ArrayList<>();
-            for (int i=offset; i<n && i<offset+10; ++i) {
-                Log.i("trying adding news #", Integer.toString(i));
+            for (int i=0; i<datas.length(); ++i) {
                 // extract title etc,.
                 final JSONObject o = datas.getJSONObject(i);
                 Thread t = addNews(o);
                 threadpool.add(t);
             }
+            // join threads
             for (Thread t: threadpool) {
                 try {
                     t.join();
@@ -120,11 +115,11 @@ public class NewsList {
                     e.printStackTrace();
                 }
             }
-            offset += 10;
         }
         catch (Exception e) {
             e.printStackTrace();
         }
+        Log.i(Integer.toString(news.size()), "news fetched");
         return this;
     }
     public News getItem(int position){
