@@ -19,6 +19,7 @@
         android:usesCleartextTraffic="true"
         android:theme="@style/AppTheme">
         <activity android:name=".CategoryActivity"></activity>
+        <activity android:name=".VisualizeActivity"/>
         <activity android:name=".ItemNewsActivity" />
         <activity android:name=".HomePage" />
         <activity android:name=".OpeningActivity" />

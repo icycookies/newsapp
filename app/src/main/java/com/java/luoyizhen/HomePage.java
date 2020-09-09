@@ -69,6 +69,9 @@ public class HomePage extends AppCompatActivity {
                     curCategory = category;
                     newsList.setCategory(curCategory);
                     Log.i("category_change", curCategory);
+                    if (curCategory == "数据"){
+                        startActivity(new Intent(context, VisualizeActivity.class));
+                    }
                     refresh();
                 }
             });
@@ -165,12 +168,6 @@ public class HomePage extends AppCompatActivity {
             }
         });
         t.start();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-
-            }
-        }, 2000);
     }
 
     private void add(){
