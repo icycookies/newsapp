@@ -63,7 +63,7 @@ public class Server {
                         if (level == 0) {
                             country.add(new AbstractMap.SimpleEntry<String, Integer>(name, contracted));
                         }
-                        if (level == 1 && name.substring(0,6) == "China|") {
+                        if (level == 1 && name.substring(0,6).equals("China|")) {
                             province.add(new AbstractMap.SimpleEntry<String, Integer>(name, contracted));
                         }
                     }
