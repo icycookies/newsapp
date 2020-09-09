@@ -21,7 +21,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class NewsList {
+public class NewsList implements java.io.Serializable {
     private String category;
     private ArrayList<News> news;
     private int numpage = 0;
@@ -89,15 +89,12 @@ public class NewsList {
         try {
             // fetch news list
             JSONArray datas;
-            InputStream is = new URL("https://covid-dashboard.aminer.cn/api/events/list?page="+numpage).openStream();
-            try {
+            try (InputStream is = new URL("https://covid-dashboard.aminer.cn/api/events/list?page=" + numpage).openStream()) {
                 // parse JSON response -> datas
                 BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
                 String jsonText = readAll(rd);
                 JSONObject json = new JSONObject(jsonText);
                 datas = json.getJSONArray("data");
-            } finally {
-                is.close();
             }
             // add news to list & launch detail-fetch threads
             ArrayList<Thread> threadpool = new ArrayList<>();
@@ -148,14 +145,11 @@ public class NewsList {
     }
 
     public static JSONObject readJsonFromUrl(String url) throws IOException, JSONException {
-        InputStream is = new URL(url).openStream();
-        try {
+        try (InputStream is = new URL(url).openStream()) {
             BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
             String jsonText = readAll(rd);
             JSONObject json = new JSONObject(jsonText);
             return json;
-        } finally {
-            is.close();
         }
     }
 }
