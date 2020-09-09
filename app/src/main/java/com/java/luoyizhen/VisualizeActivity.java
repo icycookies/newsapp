@@ -32,13 +32,28 @@ public class VisualizeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_visualize);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("疫情数据");
 
-        data = Server.getCovidData();
-        curField = 0;
+        getData();
         bindEvents();
         show();
     }
 
+    private void getData(){
+        curField = 0;
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    data = Server.getCovidData();
+                }catch (ExceptionInInitializerError e){
+                    e.printStackTrace();
+                }
+            }
+        });
+        t.start();
+    }
     private void bindEvents() {
         Button button0 = findViewById(R.id.localData);
         button0.setOnClickListener(new View.OnClickListener() {
