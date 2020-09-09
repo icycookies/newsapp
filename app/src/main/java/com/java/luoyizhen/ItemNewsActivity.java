@@ -42,29 +42,11 @@ public class ItemNewsActivity extends AppCompatActivity {
 
     private void showContent(){
         networkAvail = true;
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try{
-                    content = Server.getHtml(url);
-                }catch (ExceptionInInitializerError e){
-                    networkAvail = false;
-                }
-            }
-        });
-        t.start();
-        try {
-            t.join();
-        }catch (InterruptedException e){
-            e.printStackTrace();
-        }
         if (/*改为文件存在*/false){
 
         }else{
             if (!networkAvail)content = "请检查网络连接";
-            //webView.loadData(content, "text/html", "gb2312");
-            Log.i("=========html============", content);
-            webView.loadDataWithBaseURL(null, content, "text/html", "utf-8", null);
+            webView.loadUrl(url);
         }
     }
 
