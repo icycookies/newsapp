@@ -32,7 +32,7 @@ public class Server {
     static public void addHistory(News news){
         //TODO: add news to history
     }
-    static public NewsList getHistory(){
+    static public synchronized NewsList getHistory(){
         //TODO: return history news
         return null;
     }

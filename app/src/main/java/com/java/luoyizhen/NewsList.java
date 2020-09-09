@@ -82,7 +82,7 @@ public class NewsList {
         numpage = 0;
         getMore();
     }
-    public NewsList getMore(){
+    public synchronized NewsList getMore(){
         numpage += 1;
         Log.i("Getting news list page=", Integer.toString(numpage));
         news.clear();
@@ -125,7 +125,7 @@ public class NewsList {
     public News getItem(int position){
         return news.get(position);
     }
-    public ArrayList<News> getAll(){
+    public synchronized ArrayList<News> getAll(){
         return news;
     }
     public ArrayList<Map<String, Object>> getAllItems(){
