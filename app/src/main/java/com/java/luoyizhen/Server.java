@@ -62,9 +62,8 @@ public class Server {
                         int contracted = lastdata.getInt(0);
                         if (level == 0) {
                             country.add(new AbstractMap.SimpleEntry<String, Integer>(name, contracted));
-
                         }
-                        if (level == 1) {
+                        if (level == 1 && name.substring(0,6) == "China|") {
                             province.add(new AbstractMap.SimpleEntry<String, Integer>(name, contracted));
                         }
                     }
@@ -89,6 +88,7 @@ public class Server {
         catch (Exception e) {
             e.printStackTrace();
         }
+        Log.i("WDNM","WDNM");
         return null;
     }
     private static String readAll(Reader rd) throws IOException {
