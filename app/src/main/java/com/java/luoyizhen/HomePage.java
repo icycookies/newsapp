@@ -135,7 +135,7 @@ public class HomePage extends AppCompatActivity {
                 newsListView.removeAllViews();
                 selectedList = historyNewsList;
             }
-            for (final News news : selectedList.getAll()){
+            for (final News news : selectedList.getAll()) {
                 addNews(newsListView, news);
             }
             View view = LayoutInflater.from(context).inflate(android.R.layout.simple_list_item_1, null);
@@ -174,7 +174,6 @@ public class HomePage extends AppCompatActivity {
     }
 
     private void add(){
-        moreNews = new NewsList[]{null};
         final Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
