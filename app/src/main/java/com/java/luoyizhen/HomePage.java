@@ -128,6 +128,7 @@ public class HomePage extends AppCompatActivity {
                 Log.i("orz1", "orz");
 
             }else if (msg.what == 1) {
+                Log.i("togetmore", "getmore");
                 newsListView.removeViewAt(newsListView.getChildCount() - 1);
                 selectedList = moreNews[0];
             }else{
@@ -181,6 +182,7 @@ public class HomePage extends AppCompatActivity {
                     moreNews[0] = newsList.getMore();
                     Message msg = new Message();
                     msg.what = 1;
+                    handler.sendMessage(msg);
                 }catch (ExceptionInInitializerError e){
                     Toast.makeText(getApplicationContext(),"请检查网络设置", Toast.LENGTH_SHORT).show();
                 }

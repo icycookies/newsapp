@@ -20,28 +20,6 @@ import java.util.Map;
 
 
 public class Server {
-    static public String getHtml(String url){
-        // get html code from url
-        String text = "Error";
-        try {
-            Log.i("URL!",url);
-            InputStream is = new URL(url).openStream();
-            try {
-                BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
-                text = readAll(rd);
-            } finally {
-                is.close();
-            }
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        return text;
-    }
-    static public String getCharset(String html){
-        //TODO: get charset of page
-        return "utf-8";
-    }
     static public ArrayList<String> getFavor(){
         //TODO: get favored categories
         ArrayList<String> arr = new ArrayList<>();

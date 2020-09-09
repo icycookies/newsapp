@@ -108,24 +108,23 @@ public class ItemNewsActivity extends AppCompatActivity {
 
                 }else{
                     if (!networkAvail)content = "请检查网络连接";
-                    Log.i("=========html============", content);
-                    webView.loadDataWithBaseURL(null, content, "text/html", "utf-8", null);
+                    Log.i("=========url============", url);
+                    webView.loadUrl(url);
                 }
             }
         }
     };
 
-    private void showContent(){
+    private void showContent() {
         networkAvail = true;
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                try{
-                    content = Server.getHtml(url);
+                try {
                     Message msg = new Message();
                     msg.what = 0;
                     handler.sendMessage(msg);
-                }catch (ExceptionInInitializerError e){
+                } catch (ExceptionInInitializerError e) {
                     networkAvail = false;
                 }
             }
