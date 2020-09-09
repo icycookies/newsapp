@@ -40,15 +40,14 @@ public class Server {
         CovidData coviddata = null;
         try {
             // fetch news list
-            InputStream is = new URL("https://covid-dashboard.aminer.cn/api/dist/epidemic.json").openStream();
-            ArrayList<Map.Entry<String, Integer>> province = new ArrayList<>(), country = new ArrayList<>();
-            try {
+            try (InputStream is = new URL("https://covid-dashboard.aminer.cn/api/dist/epidemic.json").openStream()) {
+                ArrayList<Map.Entry<String, Integer>> province = new ArrayList<>(), country = new ArrayList<>();
                 // parse JSON response
                 BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
                 String jsonText = readAll(rd);
                 JSONObject json = new JSONObject(jsonText);
                 Iterator<String> keys = json.keys();
-                while(keys.hasNext()) {
+                while (keys.hasNext()) {
                     String name = keys.next();
                     if (json.get(name) instanceof JSONObject) {
                         // do something with jsonObject here
@@ -77,15 +76,13 @@ public class Server {
                 int dead = lastdata.getInt(3);
                 coviddata = new CovidData(
                         confirmed,
-                        confirmed-cured-dead,
+                        confirmed - cured - dead,
                         dead,
                         province,
                         country,
                         null,
                         null
                 );
-            } finally {
-                is.close();
             }
             return coviddata;
         }
