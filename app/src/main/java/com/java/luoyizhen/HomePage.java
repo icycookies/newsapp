@@ -6,6 +6,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -17,6 +18,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -46,9 +48,9 @@ public class HomePage extends AppCompatActivity {
         setContentView(R.layout.activity_home_page);
         favor = Server.getFavor();
         curCategory = "推荐";
-        newsList = new NewsList(curCategory);
-        newsListView = this.findViewById(R.id.newslist);
         context = this.getApplicationContext();
+        newsList = new NewsList(curCategory, context);
+        newsListView = this.findViewById(R.id.newslist);
         Intent intent = getIntent();
 
         fillCategory();
@@ -62,6 +64,9 @@ public class HomePage extends AppCompatActivity {
         for (final String category : favor){
             View view = LayoutInflater.from(this.getApplicationContext()).inflate(android.R.layout.simple_list_item_1, null);
             TextView textView = view.findViewById(android.R.id.text1);
+            if (category.equals(curCategory) && curCategory != "数据"){
+                textView.setTextColor(Color.RED);
+            }
             textView.setText(category);
             textView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -69,9 +74,9 @@ public class HomePage extends AppCompatActivity {
                     curCategory = category;
                     newsList.setCategory(curCategory);
                     Log.i("category_change", curCategory);
-                    if (curCategory == "数据"){
+                    if (curCategory == "数据") {
                         startActivity(new Intent(context, VisualizeActivity.class));
-                    }
+                    }else fillCategory();
                     refresh();
                 }
             });
@@ -80,7 +85,7 @@ public class HomePage extends AppCompatActivity {
     }
 
     private void bindEvents(){
-        Button btn = findViewById(R.id.categoryOption);
+        ImageButton btn = findViewById(R.id.categoryOption);
         //设置分类列表
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
