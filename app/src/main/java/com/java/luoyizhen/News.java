@@ -10,7 +10,7 @@ public class News implements java.io.Serializable {
     private String content;             //正文内容（也许并不需要）
     private String[] image;             //图片链接
 
-    private boolean viewed;             //是否已读
+    public boolean viewed;             //是否已读
     private String file;                //本地存储路径
 
     //聚类

@@ -119,6 +119,14 @@ public class NewsList implements java.io.Serializable {
             return;
         }
     }
+    public void view(int index){
+        News t = news.get(index);
+        if (!t.viewed) {
+            Log.i("aha", "view");
+            t.viewed = true;
+            saveCache();
+        }
+    }
     public void getFeed() {
         // return first 10 entries of news list
         numpage = 0;
