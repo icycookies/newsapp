@@ -55,7 +55,7 @@ public class Server {
         try {
             FileOutputStream fileOut = new FileOutputStream(cachefilename());
             ObjectOutputStream out = new ObjectOutputStream(fileOut);
-            out.writeObject(news);
+            out.writeObject(history);
             out.close();
             fileOut.close();
         } catch (IOException i) {
@@ -72,13 +72,10 @@ public class Server {
                 history = (ArrayList<News>) in.readObject();
                 in.close();
                 fileIn.close();
-            } catch (IOException i) {
-                i.printStackTrace();
-                return null;
-            } catch (ClassNotFoundException c) {
-                System.out.println("newslist class not found");
-                c.printStackTrace();
-                return null;
+            } catch (Exception e) {
+                e.printStackTrace();
+                history = null;
+                return new NewsList("History",context);
             }
         }
         return new NewsList("History",context,history);
