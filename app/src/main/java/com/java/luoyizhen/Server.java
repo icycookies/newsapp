@@ -46,6 +46,16 @@ public class Server {
     }
     // history
     private static ArrayList<News> history;
+    static public boolean inHistory(News news) {
+        if (history == null)
+            getHistory();
+        if (history == null)
+            return false;
+        for (News o: history)
+            if (o.getUrl() == news.getUrl())
+                return true;
+        return false;
+    }
     static public void addHistory(News news){
         if (history == null)
             history = new ArrayList<>();
