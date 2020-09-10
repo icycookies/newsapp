@@ -215,6 +215,7 @@ public class HomePage extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 news.view();
+                newsList.saveCache();
                 Server.addHistory(news);
                 int color = ContextCompat.getColor(context, R.color.colorRead);
                 title.setTextColor(color);

@@ -90,7 +90,7 @@ public class NewsList implements java.io.Serializable {
     private String cachefilename() {
         return context.getFilesDir() + "cache_newslist_" + category;
     }
-    private void saveCache() {
+    public void saveCache() {
         Log.i("Saving news list to", cachefilename());
         try {
             FileOutputStream fileOut = new FileOutputStream(cachefilename());
