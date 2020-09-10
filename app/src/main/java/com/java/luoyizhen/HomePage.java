@@ -20,13 +20,16 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
+import com.squareup.picasso.Picasso;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -41,22 +44,30 @@ public class HomePage extends AppCompatActivity {
     private NewsList newsList;
     private NewsList historyNewsList;
     private NewsList[] moreNews = {null};
+    private Entity entity;
     private Context context;
     private LinearLayout newsListView;
+    private SearchView searchView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
-        getSupportActionBar().setTitle("Covid19-News");
+
         favor = Server.getFavor();
         curCategory = "推荐";
-        context = this.getApplicationContext();
         newsList = new NewsList(curCategory, context);
-        newsListView = this.findViewById(R.id.newslist);
 
-        Intent intent = getIntent();
+        context = this.getApplicationContext();
+        newsListView = this.findViewById(R.id.newslist);
+        searchView = this.findViewById(R.id.search);
+        searchView.setSubmitButtonEnabled(true);
+        getSupportActionBar().setTitle("Covid19-News");
+
+        Server.setContext(context);
+
         fillCategory();
         bindEvents();
+        Intent intent = getIntent();
         if (intent.getBooleanExtra("reload_news", true))refresh();
     }
 
@@ -128,6 +139,35 @@ public class HomePage extends AppCompatActivity {
                 }
             }
         });
+        //搜索
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(final String query) {
+                Thread t = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try{
+                            newsListView.removeAllViews();
+                            findViewById(R.id.loading_view_0).setVisibility(View.VISIBLE);
+                            newsList = Server.search(query);
+                            entity = Server.getEntity(query);
+                            Message msg = new Message();
+                            msg.what = 3;
+                            handler.sendMessage(msg);
+                        }catch (ExceptionInInitializerError e){
+                            Toast.makeText(getApplicationContext(),"请检查网络设置", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+                t.start();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
     }
 
     final private Handler handler = new Handler(){
@@ -139,7 +179,6 @@ public class HomePage extends AppCompatActivity {
                 newsListView.removeAllViews();
                 selectedList = newsList;
                 Log.i("orz1", "orz");
-
             }else if (msg.what == 1) {
                 Log.i("togetmore", "getmore");
                 newsListView.removeViewAt(newsListView.getChildCount() - 1);
@@ -147,6 +186,9 @@ public class HomePage extends AppCompatActivity {
             }else{
                 newsListView.removeAllViews();
                 selectedList = historyNewsList;
+            }
+            if (msg.what == 3 && entity != null) {
+                addEntity();
             }
             for (final News news : selectedList.getAll()) {
                 addNews(newsListView, news);
@@ -234,5 +276,28 @@ public class HomePage extends AppCompatActivity {
             }
         });
         newsListView.addView(view);
+    }
+
+    private void addEntity(){
+        final View view = LayoutInflater.from(this.getApplicationContext()).inflate(R.layout.entity, null);
+        final TextView name = view.findViewById(R.id.entity_name);
+        final TextView description = view.findViewById(R.id.entity_description);
+        final ImageView image = view.findViewById(R.id.entity_image);
+        final ListView relations = view.findViewById(R.id.relations);
+
+        name.setText(entity.getName());
+        description.setText(entity.getDescription());
+        ArrayList<HashMap<String, Object>> data = new ArrayList<>();
+        Picasso.with(this).load(entity.getImage()).into(image);
+        for (Map.Entry<String, String> relation : entity.getRelation()){
+            HashMap<String, Object> item = new HashMap<>();
+            item.put("relation_type", relation.getKey());
+            item.put("relation_entity", relation.getValue());
+            data.add(item);
+        }
+        SimpleAdapter adapter = new SimpleAdapter(context, data, R.layout.simple_relation,
+                new String[]{"relation_type", "relation_entity"},
+                new int[]{R.id.orz0, R.id.orz1});
+        relations.setAdapter(adapter);
     }
 }

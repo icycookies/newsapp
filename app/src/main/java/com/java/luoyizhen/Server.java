@@ -1,5 +1,6 @@
 package com.java.luoyizhen;
 
+import android.content.Context;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -20,6 +21,11 @@ import java.util.Map;
 
 
 public class Server {
+    static private Context context;
+
+    static public void setContext(Context context1){
+        context = context1;
+    }
     static public ArrayList<String> getFavor(){
         //TODO: get favored categories
         ArrayList<String> arr = new ArrayList<>();
@@ -34,6 +40,14 @@ public class Server {
     }
     static public synchronized NewsList getHistory(){
         //TODO: return history news
+        return null;
+    }
+    static public NewsList search(String query){
+        //TODO: return news that contains string query
+        return null;
+    }
+    static public Entity getEntity(String query){
+        //TODO: return entity if exists
         return null;
     }
     static public CovidData getCovidData(){
