@@ -32,9 +32,9 @@ public class NewsList implements java.io.Serializable {
     private Context context;
     private int numpage = 0;
 
-    NewsList(String category, Context context){
+    NewsList(String category, Context context, ArrayList<News> news = new ArrayList<>()){
         this.category = category;
-        this.news = new ArrayList<>();
+        this.news = news;
         this.context = context;
     }
     public void setCategory(String category){
