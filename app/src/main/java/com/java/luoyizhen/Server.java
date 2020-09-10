@@ -23,6 +23,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 
+import static java.lang.Math.min;
+
 
 public class Server {
     static private Context context;
@@ -45,35 +47,35 @@ public class Server {
     // history
     private ArrayList<News> history;
     static public void addHistory(News news){
-        // write to local files
-        Log.i("Saving History list to", cachefilename());
-        try {
-            FileOutputStream fileOut = new FileOutputStream(cachefilename());
-            ObjectOutputStream out = new ObjectOutputStream(fileOut);
-            out.writeObject(news);
-            out.close();
-            fileOut.close();
-        } catch (IOException i) {
-            i.printStackTrace();
-        }
+//        // write to local files
+//        Log.i("Saving History list to", cachefilename());
+//        try {
+//            FileOutputStream fileOut = new FileOutputStream(cachefilename());
+//            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+//            out.writeObject(news);
+//            out.close();
+//            fileOut.close();
+//        } catch (IOException i) {
+//            i.printStackTrace();
+//        }
     }
     static public synchronized NewsList getHistory(){
-        // load from local files
-        Log.i("Loading news list from",cachefilename());
-        try {
-            FileInputStream fileIn = new FileInputStream(cachefilename());
-            ObjectInputStream in = new ObjectInputStream(fileIn);
-            news = (ArrayList<News>) in.readObject();
-            in.close();
-            fileIn.close();
-        } catch (IOException i) {
-            i.printStackTrace();
-            return;
-        } catch (ClassNotFoundException c) {
-            System.out.println("newslist class not found");
-            c.printStackTrace();
-            return;
-        }
+//        // load from local files
+//        Log.i("Loading news list from",cachefilename());
+//        try {
+//            FileInputStream fileIn = new FileInputStream(cachefilename());
+//            ObjectInputStream in = new ObjectInputStream(fileIn);
+//            news = (ArrayList<News>) in.readObject();
+//            in.close();
+//            fileIn.close();
+//        } catch (IOException i) {
+//            i.printStackTrace();
+//            return;
+//        } catch (ClassNotFoundException c) {
+//            System.out.println("newslist class not found");
+//            c.printStackTrace();
+//            return;
+//        }
         return null;
     }
 
@@ -82,8 +84,31 @@ public class Server {
         return null;
     }
     static public Entity getEntity(String query){
-        //TODO: return entity if exists
-        return null;
+        // return entity if exists
+        String url = "https://innovaapi.aminer.cn/covid/api/v1/pneumonia/entityquery?entity=" + query;
+        try (InputStream is = new URL(url).openStream()) {
+            // parse JSON response (first entry) -> data
+            BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+            String jsonText = readAll(rd);
+            JSONObject json = new JSONObject(jsonText);
+            if (!json.getString("msg").equals("success")) return null;
+            JSONObject data = json.getJSONArray("data").getJSONObject(0);
+            JSONArray relobj = data.getJSONObject("abstractInfo").getJSONObject("COVID").getJSONArray("relations");
+            int nrelation = min(relobj.length(), 10);
+            ArrayList<Map.Entry<String, String>> relation = new ArrayList<>();
+            for (int i=0; i<nrelation; ++i) {
+                JSONObject o = relobj.getJSONObject(i);
+                relation.add(new AbstractMap.SimpleEntry<String, String>(o.getString("relation"), o.getString("label")));
+            }
+            return new Entity(
+                    data.getString("label"),
+                    data.getJSONObject("abstractInfo").getString("baidu"),
+                    (Map.Entry<String,String>[])relation.toArray(),
+                    data.getString("img"));
+        }
+        catch (Exception e) {
+            return null;
+        }
     }
 
     static public CovidData getCovidData(){
