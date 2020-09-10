@@ -23,7 +23,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.SearchView;
+import androidx.appcompat.widget.SearchView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -143,12 +143,12 @@ public class HomePage extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(final String query) {
+                newsListView.removeAllViews();
+                findViewById(R.id.loading_view_0).setVisibility(View.VISIBLE);
                 Thread t = new Thread(new Runnable() {
                     @Override
                     public void run() {
                         try{
-                            newsListView.removeAllViews();
-                            findViewById(R.id.loading_view_0).setVisibility(View.VISIBLE);
                             newsList = Server.search(query);
                             entity = Server.getEntity(query);
                             Message msg = new Message();
