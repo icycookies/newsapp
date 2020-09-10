@@ -281,14 +281,14 @@ public class HomePage extends AppCompatActivity {
         final View view = LayoutInflater.from(this.getApplicationContext()).inflate(R.layout.entity, null);
         final TextView name = view.findViewById(R.id.entity_name);
         final TextView description = view.findViewById(R.id.entity_description);
-        //final ImageView image = view.findViewById(R.id.entity_image);
+        final ImageView image = view.findViewById(R.id.entity_image);
         final ListView relations = view.findViewById(R.id.relations);
 
         name.setText(entity.getName());
         description.setText(entity.getDescription());
         Log.i("description", entity.getDescription());
         ArrayList<HashMap<String, Object>> data = new ArrayList<>();
-        //Picasso.with(this).load(entity.getImage()).into(image);
+        Picasso.with(this).load(entity.getImage()).into(image);
         for (Map.Entry<String, String> relation : entity.getRelation()){
             HashMap<String, Object> item = new HashMap<>();
             item.put("relation_type", relation.getKey());
