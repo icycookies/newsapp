@@ -9,6 +9,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/wrapper"/>
+    <com.zyao89.view.zloading.ZLoadingView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:z_type="SingleCircleBuilder"
+        android:id="@+id/loading_view_1"
+        app:z_color="#000000"/>
     <TableLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -23,12 +29,15 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="9"
                 android:gravity="center"
+                android:textSize="18sp"
+                android:textColor="#3c3c3c"
                 android:text="分享到"/>
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:id="@+id/cancel"
+                android:background="#FFFFFF"
                 android:text="取消"/>
         </TableRow>
         <TableRow>
@@ -36,12 +45,18 @@
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_marginLeft="20dp"
+                android:src="@mipmap/wechat"
+                android:scaleType="fitXY"
+                android:background="#FFFFFF"
                 android:id="@+id/wechat"/>
             <ImageButton
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="10dp"
+                android:src="@mipmap/weibo"
+                android:scaleType="fitXY"
+                android:background="#FFFFFF"
                 android:id="@+id/weibo"/>
         </TableRow>
         <TableRow>

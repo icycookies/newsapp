@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -65,6 +67,9 @@ public class ItemNewsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("新闻正文");
 
+        webView.getSettings().setAppCachePath( getApplicationContext().getCacheDir().getAbsolutePath() );
+        webView.getSettings().setAllowFileAccess(true);
+        webView.getSettings().setAppCacheEnabled(true);
         webView.getSettings().setDomStorageEnabled(true);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
@@ -104,32 +109,28 @@ public class ItemNewsActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg){
             if (msg.what == 0){
-                if (/*改为文件存在*/false){
 
-                }else{
-                    if (!networkAvail)content = "请检查网络连接";
-                    Log.i("=========url============", url);
-                    webView.loadUrl(url);
-                }
             }
         }
     };
 
     private void showContent() {
-        networkAvail = true;
-        Thread t = new Thread(new Runnable() {
+        if ( !isNetworkAvailable() ) { // loading offline
+            webView.getSettings().setCacheMode( WebSettings.LOAD_CACHE_ELSE_NETWORK );
+        }
+        webView.loadUrl(url);
+        new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                try {
-                    Message msg = new Message();
-                    msg.what = 0;
-                    handler.sendMessage(msg);
-                } catch (ExceptionInInitializerError e) {
-                    networkAvail = false;
-                }
+                findViewById(R.id.loading_view_1).setVisibility(View.INVISIBLE);
             }
-        });
-        t.start();
+        }, 2000);
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService( CONNECTIVITY_SERVICE );
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     @Override

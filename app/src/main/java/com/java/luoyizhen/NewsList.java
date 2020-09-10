@@ -1,5 +1,6 @@
 package com.java.luoyizhen;
 
+import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -28,14 +29,18 @@ import org.json.JSONObject;
 public class NewsList implements java.io.Serializable {
     private String category;
     private ArrayList<News> news;
+    private Context context;
     private int numpage = 0;
 
-    NewsList(String category){
+    NewsList(String category, Context context){
         this.category = category;
         this.news = new ArrayList<>();
     }
     public void setCategory(String category){
         this.category = category;
+    }
+    public void setContext(Context context){
+        this.context = context;
     }
     private Thread addNews(final JSONObject o)
     {

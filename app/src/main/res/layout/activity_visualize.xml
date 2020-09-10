@@ -32,7 +32,6 @@
                         android:layout_height="40dp"
                         android:gravity="center"
                         android:id="@+id/allCount"
-                        android:text="12345"
                         android:textSize="18sp"/>
                 </LinearLayout>
                 <LinearLayout
@@ -51,7 +50,6 @@
                         android:layout_height="40dp"
                         android:gravity="center"
                         android:id="@+id/curCount"
-                        android:text="12345"
                         android:textSize="18sp"/>
                 </LinearLayout>
                 <LinearLayout
@@ -70,7 +68,6 @@
                         android:layout_height="40dp"
                         android:id="@+id/deadCount"
                         android:gravity="center"
-                        android:text="12345"
                         android:textSize="18sp"/>
                 </LinearLayout>
             </TableRow>
@@ -91,10 +88,10 @@
                     android:text="国际疫情"
                     android:id="@+id/globalData"/>
             </TableRow>
-            <com.github.mikephil.charting.charts.BarChart
+            <com.github.mikephil.charting.charts.HorizontalBarChart
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
-                android:layout_marginLeft="30dp"
+                android:layout_marginLeft="10dp"
                 android:layout_marginRight="30dp"
                 android:id="@+id/rank"/>
         </TableLayout>
