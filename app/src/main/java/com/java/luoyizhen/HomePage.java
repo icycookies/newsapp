@@ -7,6 +7,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -46,13 +47,14 @@ public class HomePage extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
+        getSupportActionBar().setTitle("Covid19-News");
         favor = Server.getFavor();
         curCategory = "推荐";
         context = this.getApplicationContext();
         newsList = new NewsList(curCategory, context);
         newsListView = this.findViewById(R.id.newslist);
-        Intent intent = getIntent();
 
+        Intent intent = getIntent();
         fillCategory();
         bindEvents();
         if (intent.getBooleanExtra("reload_news", true))refresh();
@@ -66,6 +68,8 @@ public class HomePage extends AppCompatActivity {
             TextView textView = view.findViewById(android.R.id.text1);
             if (category.equals(curCategory) && curCategory != "数据"){
                 textView.setTextColor(Color.RED);
+                textView.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
+                textView.getPaint().setAntiAlias(true);
             }
             textView.setText(category);
             textView.setOnClickListener(new View.OnClickListener() {
@@ -130,6 +134,7 @@ public class HomePage extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg){
             NewsList selectedList = null;
+            findViewById(R.id.loading_view_0).setVisibility(View.INVISIBLE);
             if (msg.what == 0){
                 newsListView.removeAllViews();
                 selectedList = newsList;

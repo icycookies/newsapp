@@ -2,8 +2,10 @@ package com.java.luoyizhen;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -17,6 +19,7 @@ import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.TableLayout;
 import android.widget.Toast;
 
@@ -34,6 +37,7 @@ public class ItemNewsActivity extends AppCompatActivity {
     private WebView webView;
     private TableLayout shareTable;
     private IWXAPI wxapi;
+    private Activity activity = this;
     final String appID = "e91e4a77b8463c3052ce8cda2f14a93d";
     private boolean networkAvail;
     @Override
@@ -77,6 +81,14 @@ public class ItemNewsActivity extends AppCompatActivity {
         webView.getSettings().setAppCacheEnabled(true);
         webView.getSettings().setSupportZoom(true);
         webView.getSettings().setBuiltInZoomControls(true);
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                // TODO hide your progress image
+                findViewById(R.id.loading_view_1).setVisibility(View.INVISIBLE);
+                super.onPageFinished(view, url);
+            }
+        });
     }
 
     private void bindEvents(){
@@ -119,12 +131,6 @@ public class ItemNewsActivity extends AppCompatActivity {
             webView.getSettings().setCacheMode( WebSettings.LOAD_CACHE_ELSE_NETWORK );
         }
         webView.loadUrl(url);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                findViewById(R.id.loading_view_1).setVisibility(View.INVISIBLE);
-            }
-        }, 2000);
     }
 
     private boolean isNetworkAvailable() {
