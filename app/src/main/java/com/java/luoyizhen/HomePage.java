@@ -281,7 +281,7 @@ public class HomePage extends AppCompatActivity {
         final View view = LayoutInflater.from(this.getApplicationContext()).inflate(R.layout.entity, null);
         final TextView name = view.findViewById(R.id.entity_name);
         final TextView description = view.findViewById(R.id.entity_description);
-        final ImageView image = view.findViewById(R.id.entity_image);
+        //final ImageView image = view.findViewById(R.id.entity_image);
         final ListView relations = view.findViewById(R.id.relations);
 
         name.setText(entity.getName());
