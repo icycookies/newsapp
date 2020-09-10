@@ -55,9 +55,9 @@ public class HomePage extends AppCompatActivity {
 
         favor = Server.getFavor();
         curCategory = "推荐";
-        newsList = new NewsList(curCategory, context);
 
         context = this.getApplicationContext();
+        newsList = new NewsList(curCategory, context);
         newsListView = this.findViewById(R.id.newslist);
         searchView = this.findViewById(R.id.search);
         searchView.setSubmitButtonEnabled(true);
@@ -87,7 +87,6 @@ public class HomePage extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     curCategory = category;
-                    newsList.setCategory(curCategory);
                     Log.i("category_change", curCategory);
                     if (curCategory == "数据") {
                         startActivity(new Intent(context, VisualizeActivity.class));
@@ -183,12 +182,12 @@ public class HomePage extends AppCompatActivity {
                 Log.i("togetmore", "getmore");
                 newsListView.removeViewAt(newsListView.getChildCount() - 1);
                 selectedList = moreNews[0];
-            }else{
+            }else if (msg.what == 2) {
                 newsListView.removeAllViews();
                 selectedList = historyNewsList;
-            }
-            if (msg.what == 3 && entity != null) {
-                addEntity();
+            }else if (msg.what == 3) {
+                if (entity != null)addEntity();
+                return;
             }
             for (final News news : selectedList.getAll()) {
                 addNews(newsListView, news);
@@ -287,17 +286,20 @@ public class HomePage extends AppCompatActivity {
 
         name.setText(entity.getName());
         description.setText(entity.getDescription());
+        Log.i("description", entity.getDescription());
         ArrayList<HashMap<String, Object>> data = new ArrayList<>();
-        Picasso.with(this).load(entity.getImage()).into(image);
+        //Picasso.with(this).load(entity.getImage()).into(image);
         for (Map.Entry<String, String> relation : entity.getRelation()){
             HashMap<String, Object> item = new HashMap<>();
             item.put("relation_type", relation.getKey());
             item.put("relation_entity", relation.getValue());
+            Log.i("relation", relation.getKey() + " " + relation.getValue());
             data.add(item);
         }
         SimpleAdapter adapter = new SimpleAdapter(context, data, R.layout.simple_relation,
                 new String[]{"relation_type", "relation_entity"},
                 new int[]{R.id.orz0, R.id.orz1});
         relations.setAdapter(adapter);
+        newsListView.addView(view);
     }
 }

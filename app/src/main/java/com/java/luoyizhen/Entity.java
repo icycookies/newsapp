@@ -1,14 +1,15 @@
 package com.java.luoyizhen;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 public class Entity {
     private String name;
     private String description;
-    private Map.Entry<String, String>[] relation;
+    private ArrayList<Map.Entry<String, String>> relation;
     private String image;
 
-    Entity(String name, String description, Map.Entry<String, String>[] relation, String image){
+    Entity(String name, String description, ArrayList<Map.Entry<String, String>> relation, String image){
         this.name = name;
         this.description = description;
         this.relation = relation;
@@ -20,7 +21,7 @@ public class Entity {
     String getDescription(){
         return description;
     }
-    Map.Entry<String, String>[] getRelation(){
+    ArrayList<Map.Entry<String, String>> getRelation(){
         return relation;
     }
     String getImage(){

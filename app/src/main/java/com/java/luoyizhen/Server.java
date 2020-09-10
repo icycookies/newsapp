@@ -87,6 +87,7 @@ public class Server {
         // return entity if exists
         String url = "https://innovaapi.aminer.cn/covid/api/v1/pneumonia/entityquery?entity=" + query;
         try (InputStream is = new URL(url).openStream()) {
+            Log.i("tryinput", "entity");
             // parse JSON response (first entry) -> data
             BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
             String jsonText = readAll(rd);
@@ -103,10 +104,11 @@ public class Server {
             return new Entity(
                     data.getString("label"),
                     data.getJSONObject("abstractInfo").getString("baidu"),
-                    (Map.Entry<String,String>[])relation.toArray(),
+                    relation,
                     data.getString("img"));
         }
         catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }
