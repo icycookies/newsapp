@@ -37,6 +37,11 @@ public class NewsList implements java.io.Serializable {
         this.news = new ArrayList<>();
         this.context = context;
     }
+    NewsList(String category, Context context, ArrayList<News> news){
+        this.category = category;
+        this.news = news;
+        this.context = context;
+    }
     public void setCategory(String category){
         this.category = category;
     }
