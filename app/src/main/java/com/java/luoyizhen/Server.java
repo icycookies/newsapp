@@ -41,42 +41,44 @@ public class Server {
     static public void setFavor(ArrayList<String> favor){
         //TODO: set favored categories
     }
-    private String cachefilename() {
+    private static String cachefilename() {
         return context.getFilesDir() + "cache_history";
     }
     // history
-    private ArrayList<News> history;
+    private static ArrayList<News> history;
     static public void addHistory(News news){
-//        // write to local files
-//        Log.i("Saving History list to", cachefilename());
-//        try {
-//            FileOutputStream fileOut = new FileOutputStream(cachefilename());
-//            ObjectOutputStream out = new ObjectOutputStream(fileOut);
-//            out.writeObject(news);
-//            out.close();
-//            fileOut.close();
-//        } catch (IOException i) {
-//            i.printStackTrace();
-//        }
+        if (history == null)
+            history = new ArrayList<>();
+        history.add(news);
+        // write history to local files
+        Log.i("Saving History list to", cachefilename());
+        try {
+            FileOutputStream fileOut = new FileOutputStream(cachefilename());
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(history);
+            out.close();
+            fileOut.close();
+        } catch (IOException i) {
+            i.printStackTrace();
+        }
     }
     static public synchronized NewsList getHistory(){
-//        // load from local files
-//        Log.i("Loading news list from",cachefilename());
-//        try {
-//            FileInputStream fileIn = new FileInputStream(cachefilename());
-//            ObjectInputStream in = new ObjectInputStream(fileIn);
-//            news = (ArrayList<News>) in.readObject();
-//            in.close();
-//            fileIn.close();
-//        } catch (IOException i) {
-//            i.printStackTrace();
-//            return;
-//        } catch (ClassNotFoundException c) {
-//            System.out.println("newslist class not found");
-//            c.printStackTrace();
-//            return;
-//        }
-        return null;
+        // load from local files
+        if (history == null) {
+            Log.i("Loading news list from", cachefilename());
+            try {
+                FileInputStream fileIn = new FileInputStream(cachefilename());
+                ObjectInputStream in = new ObjectInputStream(fileIn);
+                history = (ArrayList<News>) in.readObject();
+                in.close();
+                fileIn.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+                history = null;
+                return new NewsList("History",context);
+            }
+        }
+        return new NewsList("History",context,history);
     }
 
     static public NewsList search(String query){
