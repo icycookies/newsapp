@@ -3,6 +3,10 @@ package com.java.luoyizhen;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -77,6 +81,38 @@ public class NewsList implements java.io.Serializable {
             return null;
         }
     }
+    private String cachefilename() {
+        return context.getFilesDir() + "cache_newslist_" + category;
+    }
+    private void saveCache() {
+        Log.i("Saving news list to", cachefilename());
+        try {
+            FileOutputStream fileOut = new FileOutputStream(cachefilename());
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(news);
+            out.close();
+            fileOut.close();
+        } catch (IOException i) {
+            i.printStackTrace();
+        }
+    }
+    private void loadCache() {
+        Log.i("Loading news list from",cachefilename());
+        try {
+            FileInputStream fileIn = new FileInputStream(cachefilename());
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            news = (ArrayList<News>) in.readObject();
+            in.close();
+            fileIn.close();
+        } catch (IOException i) {
+            i.printStackTrace();
+            return;
+        } catch (ClassNotFoundException c) {
+            System.out.println("newslist class not found");
+            c.printStackTrace();
+            return;
+        }
+    }
     public void getFeed() {
         // return first 10 entries of news list
         numpage = 0;
@@ -112,6 +148,11 @@ public class NewsList implements java.io.Serializable {
                     e.printStackTrace();
                 }
             }
+            saveCache();
+        }
+        catch (IOException e) {
+            Log.i("Loading cached...","");
+            loadCache();
         }
         catch (Exception e) {
             e.printStackTrace();
