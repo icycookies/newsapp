@@ -258,7 +258,7 @@ public class Server {
                 JSONObject o = data.getJSONObject(i);
                 JSONObject p = o.getJSONObject("profile");
                 experts.add(new Expert(
-                        getString(o,"name_zh")==null? getString(o,"name"): getString(o,"name_zh"),
+                        getString(o,"name_zh").equals("")? getString(o,"name"): getString(o,"name_zh"),
                         getString(p,"position"),
                         getString(p,"affiliation"),
                         getString(o,"avatar"),
