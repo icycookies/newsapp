@@ -137,7 +137,7 @@ public class NewsList implements java.io.Serializable {
         numpage = 0;
         getMore(topic);
     }
-    public void getFeed(int cluster){
+    public void getFeed(int clusterId){
         //TODO: get feed from the cluster
     }
     public synchronized NewsList getMore(String topic){
