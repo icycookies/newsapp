@@ -60,9 +60,13 @@ public class ItemNewsActivity extends AppCompatActivity {
         file = intent.getStringExtra("file");
         wxapi = WXAPIFactory.createWXAPI(context, appIDwechat, true);
         wxapi.registerApp(appIDwechat);
-        WbSdk.install(this, new AuthInfo(this, appIDweibo, "https://api.weibo.com/oauth2/default.html", ""));
-        wbapi = new WbShareHandler(this);
-        wbapi.registerApp();
+        try {
+            //WbSdk.install(this, new AuthInfo(this, appIDweibo, "https://api.weibo.com/oauth2/default.html", ""));
+            wbapi = new WbShareHandler(this);
+            wbapi.registerApp();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
         setupViews();
         bindEvents();
