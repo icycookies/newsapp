@@ -54,7 +54,7 @@ public class Server {
         if (history == null)
             return false;
         for (News o: history)
-            if (o.getUrl() == news.getUrl() && o.getTitle() == news.getTitle())
+            if (o.getUrl().equals(news.getUrl()) && o.getTitle().equals(news.getTitle()))
                 return true;
         return false;
     }
