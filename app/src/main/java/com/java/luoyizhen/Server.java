@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 
+import static com.java.luoyizhen.NewsList.readAll;
 import static com.java.luoyizhen.Server.getString;
 import static java.lang.Math.min;
 
@@ -35,14 +36,12 @@ public class Server {
     static public void setContext(Context context1){
         context = context1;
     }
+    static ArrayList<String> favoriteCategories = new ArrayList<String>(Arrays.asList("历史", "推荐", "新闻聚类", "国际", "数据", "知疫学者"));
     static public ArrayList<String> getFavor(){
-        //TODO: get favored categories
-        ArrayList<String> arr = new ArrayList<>();
-        arr.addAll(Arrays.asList(new String[]{"历史", "推荐", "新闻聚类", "国际", "数据", "知疫学者"}));
-        return arr;
+        return favoriteCategories;
     }
     static public void setFavor(ArrayList<String> favor){
-        //TODO: set favored categories
+        favoriteCategories = favor;
     }
     private static String cachefilename() {
         return context.getFilesDir() + "cache_history";
@@ -267,15 +266,6 @@ public class Server {
             }
         }
         return experts;
-    }
-
-    private static String readAll(Reader rd) throws IOException {
-        StringBuilder sb = new StringBuilder();
-        int cp;
-        while ((cp = rd.read()) != -1) {
-            sb.append((char) cp);
-        }
-        return sb.toString();
     }
 
 }

@@ -26,6 +26,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import static com.java.luoyizhen.CategoryData.categoryNews;
+
 public class NewsList implements java.io.Serializable {
     private String category;
     private ArrayList<News> news;
@@ -138,9 +140,13 @@ public class NewsList implements java.io.Serializable {
         getMore(topic);
     }
     public void getFeed(int clusterId){
-        //TODO: get feed from the cluster
+        // get feed from the cluster
+        news = categoryNews(clusterId);
     }
     public synchronized NewsList getMore(String topic){
+        if (topic.equals("国内")) {news = categoryNews(0); return this;}
+        if (topic.equals("前沿")) {news = categoryNews(1); return this;}
+        if (topic.equals("国际")) {news = categoryNews(2); return this;}
         numpage += 1;
         Log.i("Getting news list page=", Integer.toString(numpage));
         news.clear();
@@ -198,7 +204,7 @@ public class NewsList implements java.io.Serializable {
         }
         return data;
     }
-    private static String readAll(Reader rd) throws IOException {
+    public static String readAll(Reader rd) throws IOException {
         StringBuilder sb = new StringBuilder();
         int cp;
         while ((cp = rd.read()) != -1) {

@@ -205,7 +205,12 @@ public class HomePage extends AppCompatActivity {
                 Log.i("orz1", "orz");
             }else if (msg.what == 1) {
                 Log.i("togetmore", "getmore");
-                newsListView.removeViewAt(newsListView.getChildCount() - 1);
+                try {
+                    newsListView.removeViewAt(newsListView.getChildCount() - 1);
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
                 selectedList = moreNews[0];
             }else if (msg.what == 2) {
                 newsListView.removeAllViews();
