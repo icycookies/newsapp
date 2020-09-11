@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.telephony.mbms.MbmsErrors;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -47,6 +48,7 @@ public class ScholarActivity extends AppCompatActivity {
                 }
             }
         });
+        t.start();
     }
     final private Handler handler = new Handler(){
         @Override
@@ -80,5 +82,16 @@ public class ScholarActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch (item.getItemId()){
+            case android.R.id.home:
+                Intent intent = new Intent();
+                intent.putExtra("reload_news", true);
+                intent.putExtra("topic", "推荐");
+                this.finish();
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
