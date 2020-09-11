@@ -855,7 +855,7 @@ public class CategoryData {
         }
         return null;
     }
-    static private int[] cnt = {0,0,0};
+    static private int[] cnt = {0,0,0,0,0};
     public static String getString(JSONArray o, int id) {
         try {
             return o.getString(id);
