@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.telephony.mbms.MbmsErrors;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -79,8 +80,9 @@ public class ScholarActivity extends AppCompatActivity {
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (scholar.getHomepage().equals("")){
-                        Toast.makeText(context, "该学者没有详细信息", Toast.LENGTH_SHORT);
+                    if (scholar.getHomepage() == null){
+                        Log.i("toast", "toast");
+                        Toast.makeText(context, "该学者没有详细信息", Toast.LENGTH_SHORT).show();
                         return;
                     }
                     Intent intent = new Intent();

@@ -19,7 +19,7 @@ public class ClusterActivity extends AppCompatActivity {
 
     private int curCluster;
     private NewsList newsList;
-    private String[] keywords = new String[]{"新冠 武汉 疫情 殉职 确诊", "病毒 研究 团队 疫苗 治疗", "卫健委 钻石 公主 病例 通报", "cases new deaths united states", "first february events people report"};
+    private String[] keywords = new String[]{"新冠 武汉 疫情 殉职 确诊", "病毒 研究 团队 疫苗 治疗", "country deaths including japan italy", "cases new deaths united states", "first february events people report"};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,7 +33,7 @@ public class ClusterActivity extends AppCompatActivity {
         for (int i = 0; i < 5; i++){
             View view = LayoutInflater.from(this.getApplicationContext()).inflate(android.R.layout.simple_list_item_1, null);
             TextView textView = view.findViewById(android.R.id.text1);
-            textView.setText("分类" + i);
+            textView.setText("分类" + (i + 1));
             final int finalI = i;
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -77,8 +77,9 @@ public class ClusterActivity extends AppCompatActivity {
         TextView textView = view0.findViewById(android.R.id.text1);
         textView.setText("关键词：" + keywords[curCluster]);
         contentList.addView(view0);
-        /*for (final News news : newsList.getAll()){
+        for (final News news : newsList.getAll()){
             final View view = LayoutInflater.from(this.getApplicationContext()).inflate(R.layout.news_item, null);
+            view.setPadding(20, 3, 20, 3);
             final TextView title = view.findViewById(R.id.title);
             final TextView publisher = view.findViewById(R.id.publisher);
             final TextView date = view.findViewById(R.id.date);
@@ -89,7 +90,7 @@ public class ClusterActivity extends AppCompatActivity {
 
             int color = ContextCompat.getColor(this, R.color.colorRead);
             contentList.addView(view);
-        }*/
+        }
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
