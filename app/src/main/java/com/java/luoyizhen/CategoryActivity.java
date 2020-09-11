@@ -3,6 +3,7 @@ package com.java.luoyizhen;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.animation.ObjectAnimator;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -28,16 +29,20 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
     private ArrayList<String> selected;
     private ArrayList<String> unselected;
     private LinearLayout selectedLayout, unselectedLayout;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        context = this.getApplicationContext();
         selected = Server.getFavor();
         unselected = new ArrayList<>();
         selectedLayout = findViewById(R.id.selected);
         unselectedLayout= findViewById(R.id.unselected);
+        selectedLayout.setBackgroundColor(Color.argb(0, 255,255,255));
+        unselectedLayout.setBackgroundColor(Color.argb(0, 255,255,255));
 
         showContent();
     }
@@ -72,12 +77,10 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
 
     private void fillList(final LinearLayout layout, ArrayList<String> items){
         int idx = 0;
-        for (String item: items){
+        for (final String item: items){
             final View view = LayoutInflater.from(this.getApplicationContext()).inflate(android.R.layout.simple_list_item_1, null);
             final TextView textView = view.findViewById(android.R.id.text1);
             textView.setText(item);
-            view.setBackgroundColor(Color.argb(0, 255,255,255));
-            textView.setBackgroundColor(Color.argb(0, 255,255,255));
             final int finalIdx = idx;
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -93,17 +96,23 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
                         toDelete = unselected;
                         flag = -1;
                     }
-                    int h = v.getHeight();
+                    int h = v.getHeight() + 5;
                     for (int i = finalIdx; i < layout.getChildCount(); i++){
                         ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(layout.getChildAt(i), "translationY", 0, -h);
                         objectAnimator.setDuration(500);
                         objectAnimator.start();
                     }
-                    ObjectAnimator objectAnimatorX = ObjectAnimator.ofFloat(v, "translationX", 0, 400 * flag);
-                    ObjectAnimator objectAnimatorY = ObjectAnimator.ofFloat(v, "translationY", 0, h * (toAdd.size() - finalIdx));
+                    ObjectAnimator objectAnimatorX = ObjectAnimator.ofFloat(v, "alpha", 1, 0);
                     objectAnimatorX.setDuration(500);
-                    objectAnimatorY.setDuration(500);
                     objectAnimatorX.start();
+                    final View view = LayoutInflater.from(context).inflate(android.R.layout.simple_list_item_1, null);
+                    final TextView textView = view.findViewById(android.R.id.text1);
+                    textView.setText(item);
+                    textView.setAlpha(0f);
+                    if (flag == 1)unselectedLayout.addView(view);
+                        else selectedLayout.addView(view);
+                    ObjectAnimator objectAnimatorY = ObjectAnimator.ofFloat(view, "alpha", 0, 1);
+                    objectAnimatorY.setDuration(500);
                     objectAnimatorY.start();
                     new Handler().postDelayed(new Runnable() {
                         @Override
@@ -115,7 +124,7 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
                             unselectedLayout.removeAllViews();
                             fill();
                         }
-                    }, 500);
+                    }, 600);
                 }
             });
             layout.addView(view);
