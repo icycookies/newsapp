@@ -132,12 +132,12 @@ public class NewsList implements java.io.Serializable {
             saveCache();
         }
     }
-    public void getFeed() {
+    public void getFeed(String topic) {
         // return first 10 entries of news list
         numpage = 0;
-        getMore();
+        getMore(topic);
     }
-    public synchronized NewsList getMore(){
+    public synchronized NewsList getMore(String topic){
         numpage += 1;
         Log.i("Getting news list page=", Integer.toString(numpage));
         news.clear();

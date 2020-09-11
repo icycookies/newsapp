@@ -18,7 +18,7 @@ import java.util.List;
 
 public class CategoryActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
-    private String[] categoryAll = new String[]{"历史", "推荐", "疫情概况", "抗疫政策", "数据", "知疫学者", "测试1", "测试2", "测试3", "测试4"};
+    private String[] categoryAll = new String[]{"历史", "推荐", "国内", "国际", "数据", "知疫学者", "前沿", "复工复产"};
     private ArrayList<String> selected;
     private ArrayList<String> unselected;
 

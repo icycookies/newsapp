@@ -55,6 +55,7 @@ public class HomePage extends AppCompatActivity {
     private Context context;
     private LinearLayout newsListView;
     private SearchView searchView;
+    private boolean scrollEnabled;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,7 +93,7 @@ public class HomePage extends AppCompatActivity {
         for (final String category : favor){
             View view = LayoutInflater.from(this.getApplicationContext()).inflate(android.R.layout.simple_list_item_1, null);
             TextView textView = view.findViewById(android.R.id.text1);
-            if (category.equals(curCategory) && curCategory != "数据"){
+            if (category.equals(curCategory) && !curCategory.equals("数据")){
                 textView.setTextColor(Color.RED);
                 textView.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
                 textView.getPaint().setAntiAlias(true);
@@ -102,10 +103,14 @@ public class HomePage extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     curCategory = category;
+                    scrollEnabled = true;
                     Log.i("category_change", curCategory);
-                    if (curCategory == "数据") {
+                    if (curCategory.equals("数据")) {
                         startActivity(new Intent(context, VisualizeActivity.class));
-                    }else fillCategory();
+                    }else{
+                        if (curCategory.equals("历史"))scrollEnabled = false;
+                        fillCategory();
+                    }
                     refresh();
                 }
             });
@@ -128,6 +133,10 @@ public class HomePage extends AppCompatActivity {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                if (!scrollEnabled){
+                    swipeRefreshLayout.setRefreshing(false);
+                    return;
+                }
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -146,8 +155,7 @@ public class HomePage extends AppCompatActivity {
                 Log.i("scrollY", Integer.toString(scrollY));
                 Log.i("parent", Integer.toString(scrollView.getHeight()));
                 View view = findViewById(R.id.newslist);
-                Log.i("child",Integer.toString(view.getHeight()));
-                if (scrollY + v.getHeight() == view.getHeight()){
+                if (scrollY + v.getHeight() == view.getHeight() && scrollEnabled){
                     add();
                     Log.i("more", "more");
                 }
@@ -163,7 +171,9 @@ public class HomePage extends AppCompatActivity {
                     @Override
                     public void run() {
                         try{
+                            scrollEnabled = false;
                             newsList = Server.search(query);
+                            Log.i("fuck", newsList.toString());
                             entity = Server.getEntity(query);
                             Message msg = new Message();
                             msg.what = 3;
@@ -190,7 +200,6 @@ public class HomePage extends AppCompatActivity {
             NewsList selectedList = null;
             findViewById(R.id.loading_view_0).setVisibility(View.INVISIBLE);
             if (msg.what == 0){
-                newsListView.removeAllViews();
                 selectedList = newsList;
                 Log.i("orz1", "orz");
             }else if (msg.what == 1) {
@@ -202,18 +211,24 @@ public class HomePage extends AppCompatActivity {
                 selectedList = historyNewsList;
             }else if (msg.what == 3) {
                 if (entity != null)addEntity();
+                selectedList = newsList;
             }
+            assert selectedList != null;
             for (final News news : selectedList.getAll()) {
                 addNews(newsListView, news);
             }
-            View view = LayoutInflater.from(context).inflate(android.R.layout.simple_list_item_1, null);
-            TextView textView = view.findViewById(android.R.id.text1);
-            textView.setText("正在努力加载中...");
-            newsListView.addView(view);
+            if (scrollEnabled) {
+                View view = LayoutInflater.from(context).inflate(android.R.layout.simple_list_item_1, null);
+                TextView textView = view.findViewById(android.R.id.text1);
+                textView.setText("正在努力加载中...");
+                newsListView.addView(view);
+            }
         }
     };
 
     private void refresh() {
+        newsListView.removeAllViews();
+        findViewById(R.id.loading_view_0).setVisibility(View.VISIBLE);
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -223,7 +238,7 @@ public class HomePage extends AppCompatActivity {
                         historyNewsList = Server.getHistory();
                         msg.what = 2;
                     }else{
-                        newsList.getFeed();
+                        newsList.getFeed(curCategory);
                         msg.what = 0;
                     }
                     handler.sendMessage(msg);
@@ -240,7 +255,7 @@ public class HomePage extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    moreNews[0] = newsList.getMore();
+                    moreNews[0] = newsList.getMore(curCategory);
                     Message msg = new Message();
                     msg.what = 1;
                     handler.sendMessage(msg);
@@ -300,14 +315,13 @@ public class HomePage extends AppCompatActivity {
 
         name.setText(entity.getName());
         description.setText(entity.getDescription());
-        Log.i("description", entity.getDescription());
+        //Log.i("description", entity.getDescription());
         ArrayList<HashMap<String, Object>> data = new ArrayList<>();
         Picasso.with(this).load(entity.getImage()).into(image);
         for (Map.Entry<String, String> relation : entity.getRelation()){
             HashMap<String, Object> item = new HashMap<>();
             item.put("relation_type", relation.getKey());
             item.put("relation_entity", relation.getValue());
-            Log.i("relation", relation.getKey() + " " + relation.getValue());
             data.add(item);
         }
         SimpleAdapter adapter = new SimpleAdapter(context, data, R.layout.simple_relation,
