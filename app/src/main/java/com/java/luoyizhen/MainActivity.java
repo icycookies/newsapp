@@ -17,6 +17,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getSupportActionBar().hide();
+        // launch thread
+        (new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Server.initSearch();
+            }
+        })).start();
     }
 
     @Override

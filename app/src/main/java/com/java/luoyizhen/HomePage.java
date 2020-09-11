@@ -73,18 +73,15 @@ public class HomePage extends AppCompatActivity {
 
         Server.setContext(context);
 
+        Intent intent = getIntent();
+        String topic = intent.getStringExtra("topic");
+        if (topic != null){
+            curCategory = topic;
+        }
         fillCategory();
         bindEvents();
-        Intent intent = getIntent();
         if (intent.getBooleanExtra("reload_news", true))refresh();
         Log.i("WDNMWDNM","");
-        // launch thread
-        (new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Server.initSearch();
-            }
-        })).start();
     }
 
     private void fillCategory(){

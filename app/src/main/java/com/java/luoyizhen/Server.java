@@ -234,16 +234,18 @@ public class Server {
     public static ArrayList<Expert> getExperts() throws Exception{
         String url = "https://innovaapi.aminer.cn/predictor/api/v1/valhalla/highlight/get_ncov_expers_list?v=2";
         ArrayList<Expert> experts = new ArrayList<>();
+        Log.i("tryinput", "wdnmd");
         try (InputStream is = new URL(url).openStream()) {
             Log.i("tryinput", "entity");
             // parse JSON response (first entry) -> data
             BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
             String jsonText = readAll(rd);
             JSONObject json = new JSONObject(jsonText);
-            if (!json.getString("msg").equals("success")) return null;
+            if (!json.getString("message").equals("success")) return null;
             JSONArray data = json.getJSONArray("data");
             // convert to Expert object
             for (int i=0; i<data.length(); ++i) {
+                Log.i("i=", Integer.toString(i));
                 JSONObject o = data.getJSONObject(i);
                 JSONObject p = o.getJSONObject("profile");
                 experts.add(new Expert(
