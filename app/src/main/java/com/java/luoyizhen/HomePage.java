@@ -107,6 +107,8 @@ public class HomePage extends AppCompatActivity {
                     Log.i("category_change", curCategory);
                     if (curCategory.equals("数据")) {
                         startActivity(new Intent(context, VisualizeActivity.class));
+                    }else if (curCategory.equals("知疫学者")){
+                        startActivity(new Intent(context, ScholarActivity.class));
                     }else{
                         if (curCategory.equals("历史"))scrollEnabled = false;
                         fillCategory();
