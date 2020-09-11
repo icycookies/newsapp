@@ -126,6 +126,8 @@ public class NewsList implements java.io.Serializable {
             return;
         }
     }
+
+
     public void view(int index){
         News t = news.get(index);
         if (!t.viewed) {
@@ -133,6 +135,12 @@ public class NewsList implements java.io.Serializable {
             t.viewed = true;
             saveCache();
         }
+    }
+    public void updateViewed() {
+        Log.e("updateViewed","wdnmd");
+        for (News o: news)
+            if (Server.inHistory(o))
+                o.view();
     }
     public void getFeed(String topic) {
         // return first 10 entries of news list
@@ -142,11 +150,12 @@ public class NewsList implements java.io.Serializable {
     public void getFeed(int clusterId){
         // get feed from the cluster
         news = categoryNews(clusterId);
+        updateViewed();
     }
     public synchronized NewsList getMore(String topic){
-        if (topic.equals("国内")) {news = categoryNews(0); return this;}
-        if (topic.equals("前沿")) {news = categoryNews(1); return this;}
-        if (topic.equals("国际")) {news = categoryNews(2); return this;}
+        if (topic.equals("国内")) {news = categoryNews(0); updateViewed(); return this;}
+        if (topic.equals("前沿")) {news = categoryNews(1); updateViewed(); return this;}
+        if (topic.equals("国际")) {news = categoryNews(2); updateViewed(); return this;}
         numpage += 1;
         Log.i("Getting news list page=", Integer.toString(numpage));
         news.clear();
@@ -186,6 +195,13 @@ public class NewsList implements java.io.Serializable {
             e.printStackTrace();
         }
         Log.i(Integer.toString(news.size()), "news fetched");
+        Log.e("fuck","yourself");
+        try {
+            updateViewed();
+        }
+        finally {
+            Log.i("我屌你妈","");
+        }
         return this;
     }
     public News getItem(int position){
