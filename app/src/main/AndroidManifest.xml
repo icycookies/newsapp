@@ -18,7 +18,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ItemScholarActivity"></activity>
+        <activity android:name=".ClusterActivity"></activity>
+        <activity android:name=".ItemScholarActivity" />
         <activity android:name=".ScholarActivity" />
         <activity android:name=".CategoryActivity" />
         <activity android:name=".VisualizeActivity" />
