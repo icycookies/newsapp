@@ -12,8 +12,10 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -24,6 +26,7 @@ public class ScholarActivity extends AppCompatActivity {
 
     private ArrayList<Expert> scholars;
     private Context context;
+    private LinearLayout scholarList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +34,7 @@ public class ScholarActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("知疫学者");
         context = this.getApplicationContext();
+        scholarList = findViewById(R.id.scholars);
 
         getData();
     }
@@ -75,12 +79,17 @@ public class ScholarActivity extends AppCompatActivity {
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (scholar.getHomepage().equals("")){
+                        Toast.makeText(context, "该学者没有详细信息", Toast.LENGTH_SHORT);
+                        return;
+                    }
                     Intent intent = new Intent();
                     intent.setClass(context, ItemScholarActivity.class);
                     intent.putExtra("url", scholar.getHomepage());
                     startActivity(intent);
                 }
             });
+            scholarList.addView(view);
         }
     }
     @Override

@@ -90,7 +90,7 @@ public class HomePage extends AppCompatActivity {
         for (final String category : favor){
             View view = LayoutInflater.from(this.getApplicationContext()).inflate(android.R.layout.simple_list_item_1, null);
             TextView textView = view.findViewById(android.R.id.text1);
-            if (category.equals(curCategory) && !curCategory.equals("数据")){
+            if (category.equals(curCategory) && !curCategory.equals("数据") && !curCategory.equals("知疫学者") && !curCategory.equals("新闻聚类")){
                 textView.setTextColor(Color.RED);
                 textView.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
                 textView.getPaint().setAntiAlias(true);
@@ -106,6 +106,8 @@ public class HomePage extends AppCompatActivity {
                         startActivity(new Intent(context, VisualizeActivity.class));
                     }else if (curCategory.equals("知疫学者")){
                         startActivity(new Intent(context, ScholarActivity.class));
+                    }else if (curCategory.equals("新闻聚类")){
+                        startActivity(new Intent(context, ClusterActivity.class));
                     }else{
                         if (curCategory.equals("历史"))scrollEnabled = false;
                         fillCategory();

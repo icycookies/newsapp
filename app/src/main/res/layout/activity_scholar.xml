@@ -11,10 +11,14 @@
         app:z_type="SingleCircleBuilder"
         android:id="@+id/loading_view_3"
         app:z_color="#000000"/>
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingTop="8dp"
-        android:id="@+id/scholars"/>
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="8dp"
+            android:id="@+id/scholars"/>
+    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
