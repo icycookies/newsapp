@@ -195,13 +195,7 @@ public class NewsList implements java.io.Serializable {
             e.printStackTrace();
         }
         Log.i(Integer.toString(news.size()), "news fetched");
-        Log.e("fuck","yourself");
-        try {
-            updateViewed();
-        }
-        finally {
-            Log.i("我屌你妈","");
-        }
+        updateViewed();
         return this;
     }
     public News getItem(int position){
