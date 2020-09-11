@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -230,7 +231,14 @@ public class Server {
         Log.i("WDNM","WDNM");
         return null;
     }
-
+    public static getString(JSONObject o, String tag) {
+        try {
+            return o.getString(tag);
+        }
+        catch (JSONException e) {
+            return null;
+        }
+    }
     public static ArrayList<Expert> getExperts() throws Exception{
         String url = "https://innovaapi.aminer.cn/predictor/api/v1/valhalla/highlight/get_ncov_expers_list?v=2";
         ArrayList<Expert> experts = new ArrayList<>();
@@ -247,11 +255,11 @@ public class Server {
                 JSONObject o = data.getJSONObject(i);
                 JSONObject p = o.getJSONObject("profile");
                 experts.add(new Expert(
-                        o.getString("name_zh"),
-                        p.getString("position"),
-                        p.getString("affiliation"),
-                        o.getString("avatar"),
-                        p.getString("homepage")
+                        getString(o,"name_zh"),
+                        getString(p,"position"),
+                        getString(p,"affiliation"),
+                        getString(o,"avatar"),
+                        getString(p,"homepage")
                 ));
             }
         }
