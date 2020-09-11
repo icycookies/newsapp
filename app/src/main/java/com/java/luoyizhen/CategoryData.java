@@ -1,5 +1,7 @@
 package com.java.luoyizhen;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -854,6 +856,14 @@ public class CategoryData {
         return null;
     }
     static private int[] cnt = {0,0,0};
+    public static String getString(JSONArray o, int id) {
+        try {
+            return o.getString(id);
+        }
+        catch (JSONException e) {
+            return null;
+        }
+    }
     static public ArrayList<News> categoryNews(final int category) {
         final String[] pool = ids(category);
         if (pool == null) return null;
@@ -873,7 +883,7 @@ public class CategoryData {
                                 data.getString("title"),
                                 data.getString("time"),
                                 "Source: unknown",
-                                data.getJSONArray("urls").getString(0),
+                                getString(data.getJSONArray("urls"),0),
                                 "The quick brown fox jumps over a lazy dog.",
                                 new String[]{"http://p5.itc.cn/q_70/images03/20200807/9e87c806515a41aeb0ba94eae6bfdb30.png"},
                                 false,
