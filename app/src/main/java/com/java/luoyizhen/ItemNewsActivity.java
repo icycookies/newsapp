@@ -23,6 +23,11 @@ import android.webkit.WebViewClient;
 import android.widget.TableLayout;
 import android.widget.Toast;
 
+import com.sina.weibo.sdk.WbSdk;
+import com.sina.weibo.sdk.api.TextObject;
+import com.sina.weibo.sdk.api.WeiboMultiMessage;
+import com.sina.weibo.sdk.auth.AuthInfo;
+import com.sina.weibo.sdk.share.WbShareHandler;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
@@ -37,8 +42,11 @@ public class ItemNewsActivity extends AppCompatActivity {
     private WebView webView;
     private TableLayout shareTable;
     private IWXAPI wxapi;
+    private WbShareHandler wbapi;
     private Activity activity = this;
-    final String appID = "e91e4a77b8463c3052ce8cda2f14a93d";
+    final String appIDwechat = "e91e4a77b8463c3052ce8cda2f14a93d";
+    final String appIDweibo = "2045436852";
+
     private boolean networkAvail;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,8 +58,11 @@ public class ItemNewsActivity extends AppCompatActivity {
         title = intent.getStringExtra("title");
         url = intent.getStringExtra("url");
         file = intent.getStringExtra("file");
-        wxapi = WXAPIFactory.createWXAPI(context, appID, true);
-        wxapi.registerApp(appID);
+        wxapi = WXAPIFactory.createWXAPI(context, appIDwechat, true);
+        wxapi.registerApp(appIDwechat);
+        WbSdk.install(this, new AuthInfo(this, appIDweibo, "https://api.weibo.com/oauth2/default.html", ""));
+        wbapi = new WbShareHandler(this);
+        wbapi.registerApp();
 
         setupViews();
         bindEvents();
@@ -107,6 +118,17 @@ public class ItemNewsActivity extends AppCompatActivity {
                 req.scene = SendMessageToWX.Req.WXSceneSession;
                 req.transaction = "sharednews";
                 wxapi.sendReq(req);
+            }
+        });
+        findViewById(R.id.weibo).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                WeiboMultiMessage msg = new WeiboMultiMessage();
+                TextObject textObject = new TextObject();
+                textObject.title = title;
+                textObject.actionUrl = url;
+                msg.textObject = textObject;
+                wbapi.shareMessage(msg, true);
             }
         });
         findViewById(R.id.cancel).setOnClickListener(new View.OnClickListener() {
