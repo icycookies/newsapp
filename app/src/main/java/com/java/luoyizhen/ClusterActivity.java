@@ -77,7 +77,7 @@ public class ClusterActivity extends AppCompatActivity {
         TextView textView = view0.findViewById(android.R.id.text1);
         textView.setText("关键词：" + keywords[curCluster]);
         contentList.addView(view0);
-        /*for (final News news : newsList.getAll()){
+        for (final News news : newsList.getAll()){
             final View view = LayoutInflater.from(this.getApplicationContext()).inflate(R.layout.news_item, null);
             final TextView title = view.findViewById(R.id.title);
             final TextView publisher = view.findViewById(R.id.publisher);
@@ -89,7 +89,7 @@ public class ClusterActivity extends AppCompatActivity {
 
             int color = ContextCompat.getColor(this, R.color.colorRead);
             contentList.addView(view);
-        }*/
+        }
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item){

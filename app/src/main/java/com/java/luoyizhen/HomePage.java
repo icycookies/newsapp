@@ -118,6 +118,14 @@ public class HomePage extends AppCompatActivity {
             category_list.addView(view);
         }
     }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 100){
+            favor = Server.getFavor();
+            fillCategory();
+        }
+    }
 
     private void bindEvents(){
         ImageButton btn = findViewById(R.id.categoryOption);
@@ -125,8 +133,8 @@ public class HomePage extends AppCompatActivity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), CategoryActivity.class));
-                fillCategory();
+                startActivityForResult(new Intent(getApplicationContext(), CategoryActivity.class), 100);
+                Log.i("getfavor", "getfavor");
             }
         });
         //下拉刷新
