@@ -110,29 +110,37 @@ public class ItemNewsActivity extends AppCompatActivity {
         findViewById(R.id.wechat).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!wxapi.isWXAppInstalled()){
-                    Toast.makeText(context, "请安装微信", Toast.LENGTH_SHORT);
-                    return;
+                try {
+                    if (!wxapi.isWXAppInstalled()) {
+                        Toast.makeText(context, "请安装微信", Toast.LENGTH_SHORT);
+                        return;
+                    }
+                    WXMediaMessage msg = new WXMediaMessage();
+                    msg.title = title;
+                    msg.description = url;
+                    SendMessageToWX.Req req = new SendMessageToWX.Req();
+                    req.message = msg;
+                    req.scene = SendMessageToWX.Req.WXSceneSession;
+                    req.transaction = "sharednews";
+                    wxapi.sendReq(req);
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
-                WXMediaMessage msg = new WXMediaMessage();
-                msg.title = title;
-                msg.description = url;
-                SendMessageToWX.Req req = new SendMessageToWX.Req();
-                req.message = msg;
-                req.scene = SendMessageToWX.Req.WXSceneSession;
-                req.transaction = "sharednews";
-                wxapi.sendReq(req);
             }
         });
         findViewById(R.id.weibo).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                WeiboMultiMessage msg = new WeiboMultiMessage();
-                TextObject textObject = new TextObject();
-                textObject.title = title;
-                textObject.actionUrl = url;
-                msg.textObject = textObject;
-                wbapi.shareMessage(msg, true);
+                try {
+                    WeiboMultiMessage msg = new WeiboMultiMessage();
+                    TextObject textObject = new TextObject();
+                    textObject.title = title;
+                    textObject.actionUrl = url;
+                    msg.textObject = textObject;
+                    wbapi.shareMessage(msg, true);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
             }
         });
         findViewById(R.id.cancel).setOnClickListener(new View.OnClickListener() {
@@ -154,6 +162,7 @@ public class ItemNewsActivity extends AppCompatActivity {
 
     private void showContent() {
         if ( !isNetworkAvailable() ) { // loading offline
+            Log.i("offline", "offline");
             webView.getSettings().setCacheMode( WebSettings.LOAD_CACHE_ELSE_NETWORK );
         }
         webView.loadUrl(url);
