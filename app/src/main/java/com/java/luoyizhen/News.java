@@ -78,9 +78,7 @@ public class News implements java.io.Serializable {
         if (!this.viewed) {
             Log.i("aha", "view");
             this.viewed = true;
-            //TODO: save the file locally
             this.file = "test";
-            //TODO: get full scripts from the server
         }
     }
 }

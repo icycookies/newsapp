@@ -15,6 +15,7 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Reader;
+import java.lang.reflect.Array;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.AbstractMap;
@@ -91,9 +92,58 @@ public class Server {
         return new NewsList("History",context,history);
     }
 
+    static ArrayList<News> allnews;
+    static public void initSearch() {
+        // get all news
+        String url = "https://covid-dashboard.aminer.cn/api/dist/events.json";
+        JSONArray datas;
+        allnews = new ArrayList<>();
+        Log.i("-----INITIALIZING SEARCH....","");
+        try {
+            try (InputStream is = new URL(url).openStream()) {
+                // parse JSON response -> datas
+                BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+                String jsonText = readAll(rd);
+                JSONObject json = new JSONObject(jsonText);
+                datas = json.getJSONArray("datas");
+            }
+            Log.i("-----INITIALIZING SEARCH data",Integer.toString(datas.length()));
+            for (int i = 0; i < datas.length(); ++i) {
+                // extract title etc,.
+                final JSONObject o = datas.getJSONObject(i);
+                final News news1 = new News(
+                        o.getString("title"),
+                        o.getString("time"),
+                        "Source: unknown",
+                        "http://example.com",
+                        "The quick brown fox jumps over a lazy dog.",
+                        new String[]{"http://p5.itc.cn/q_70/images03/20200807/9e87c806515a41aeb0ba94eae6bfdb30.png"},
+                        false,
+                        ""
+                );
+                allnews.add(news1);
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     static public NewsList search(String query){
-        //TODO: return news that contains string query
-        return null;
+        int cnt = 0, maxcnt = 20;
+        ArrayList<News> result = new ArrayList<>();
+        Log.i("SEARCHING Q=",query);
+        Log.i("ALLNEWS SIZE:",Integer.toString(allnews.size()));
+        for (News o: allnews) {
+            if (o.getTitle().contains(query)) {
+                Log.i("GOT TITLE", o.getTitle());
+                result.add(o);
+                cnt+=1;
+            }
+            if (cnt >= maxcnt)
+                break;
+        }
+        Log.i("SEARCH RESULT SIZE:", Integer.toString(result.size()));
+        return new NewsList("result",context,result);
     }
     static public Entity getEntity(String query){
         // return entity if exists

@@ -31,7 +31,14 @@ import android.widget.Toast;
 import com.github.mikephil.charting.charts.LineChart;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Array;
+import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -69,6 +76,14 @@ public class HomePage extends AppCompatActivity {
         bindEvents();
         Intent intent = getIntent();
         if (intent.getBooleanExtra("reload_news", true))refresh();
+        Log.i("WDNMWDNM","");
+        // launch thread
+        (new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Server.initSearch();
+            }
+        })).start();
     }
 
     private void fillCategory(){
@@ -187,7 +202,6 @@ public class HomePage extends AppCompatActivity {
                 selectedList = historyNewsList;
             }else if (msg.what == 3) {
                 if (entity != null)addEntity();
-                return;
             }
             for (final News news : selectedList.getAll()) {
                 addNews(newsListView, news);
