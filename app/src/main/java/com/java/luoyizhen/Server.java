@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 
+import static com.java.luoyizhen.NewsList.readAll;
 import static com.java.luoyizhen.Server.getString;
 import static java.lang.Math.min;
 
@@ -267,15 +268,6 @@ public class Server {
             }
         }
         return experts;
-    }
-
-    private static String readAll(Reader rd) throws IOException {
-        StringBuilder sb = new StringBuilder();
-        int cp;
-        while ((cp = rd.read()) != -1) {
-            sb.append((char) cp);
-        }
-        return sb.toString();
     }
 
 }
