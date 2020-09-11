@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 
+import static com.java.luoyizhen.Server.getString;
 import static java.lang.Math.min;
 
 
@@ -231,7 +232,7 @@ public class Server {
         Log.i("WDNM","WDNM");
         return null;
     }
-    public static getString(JSONObject o, String tag) {
+    public static String getString(JSONObject o, String tag) {
         try {
             return o.getString(tag);
         }
