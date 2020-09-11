@@ -38,7 +38,7 @@ public class Server {
     static public ArrayList<String> getFavor(){
         //TODO: get favored categories
         ArrayList<String> arr = new ArrayList<>();
-        arr.addAll(Arrays.asList(new String[]{"历史", "推荐", "国内", "国际", "数据", "知疫学者"}));
+        arr.addAll(Arrays.asList(new String[]{"历史", "推荐", "新闻聚类", "国际", "数据", "知疫学者"}));
         return arr;
     }
     static public void setFavor(ArrayList<String> favor){
